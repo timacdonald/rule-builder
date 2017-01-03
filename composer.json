@@ -1,0 +1,21 @@
+{
+    "name": "timacdonald/rule-builder",
+    "description": "Base project boilerplate elements.",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tim MacDonald",
+            "email": "tim.mac7@me.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+          "TiMacDonald\\Rule\\": "/src"
+        }
+    },
+    "require": {
+        "illuminate/support": "^5.3",
+        "illuminate/validation": "^5.3"
+    }
+}
