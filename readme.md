@@ -1,11 +1,9 @@
-```
-"repositories": [
-    {
-        "type": "vcs",
-        "url": "https://github.com/timacdonald/base"
-    }
-],
-"require": {
-    "timacdonald/base": "dev-master"
-}
-```
+A fluent rule builder for Laravel validation rule generation. It will proxy to the built in Laravel validation rules where possible.
+
+# Basic Usage
+
+See post: [https://timacdonald.me/blog/fluent-validation-rules-laravel/](https://timacdonald.me/blog/fluent-validation-rules-laravel/)
+
+# Installation
+
+...
