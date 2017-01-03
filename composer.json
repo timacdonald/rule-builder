@@ -15,6 +15,7 @@
         }
     },
     "require": {
+        "php" : ">=5.6",
         "illuminate/support": "^5.3",
         "illuminate/validation": "^5.3"
     }
