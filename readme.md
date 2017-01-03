@@ -2,8 +2,10 @@ A fluent rule builder for Laravel validation rule generation. It will proxy to t
 
 # Basic Usage
 
-See post: [https://timacdonald.me/blog/fluent-validation-rules-laravel/](https://timacdonald.me/blog/fluent-validation-rules-laravel/)
+See my post: [https://timacdonald.me/blog/fluent-validation-rules-laravel/](https://timacdonald.me/blog/fluent-validation-rules-laravel/)
 
 # Installation
 
-...
+`composer require timacdonald/rule-builder`
+
+[View on Packagist](https://packagist.org/packages/timacdonald/rule-builder)
