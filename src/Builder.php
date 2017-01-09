@@ -177,7 +177,11 @@ class Builder
      */
     protected function addNewLocalRule($rule, $arguments)
     {
-        $this->localRules[$rule] = Arr::flatten($arguments);
+        if ([] !== $arguments) {
+            $rule .= ':'.implode(',', Arr::flatten($arguments));
+        }
+
+        $this->localRules[] = $rule;
 
         return $this;
     }
@@ -271,46 +275,7 @@ class Builder
      */
     public function get()
     {
-        $rules = $this->compileLocalRules().$this->compileProxiedRules();
-
-        return rtrim($rules, '|');
-    }
-
-    /**
-     * Compile local rules to string.
-     *
-     * @return string
-     */
-    /**
-     * Compile local rules to string.
-     *
-     * @return string
-     */
-    protected function compileLocalRules()
-    {
-        $rules = $this->localRules;
-
-        return array_reduce(array_keys($rules), function ($carry, $key) use ($rules) {
-            $carry .= $key;
-
-            if ([] !== $rules[$key]) {
-                $carry .= ':'.implode(',', $rules[$key]);
-            }
-
-            return $carry .= '|';
-        }, '');
-    }
-
-    /**
-     * Compile proxied rules.
-     *
-     * @string
-     */
-    protected function compileProxiedRules()
-    {
-        return array_reduce($this->proxiedRules, function ($carry, $rule) {
-            return $carry .= $rule.'|';
-        }, '');
+        return array_merge($this->localRules, $this->proxiedRules);
     }
 
     /**
@@ -318,8 +283,12 @@ class Builder
      *
      * @return string
      */
-    public function toString()
+    public function __toString()
     {
-        return $this->get();
+        $proxyRules = array_map(function ($rule) {
+            return (string) $rule;
+        }, $this->proxiedRules);
+
+        return rtrim(implode('|', $this->localRules).'|'.implode('|', $proxyRules), '|');
     }
 }
