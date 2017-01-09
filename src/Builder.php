@@ -6,15 +6,16 @@ use BadMethodCallException;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Collection;
 
 class Builder
 {
     /**
-     * Rules we will handle.
+     * Rules we will handle locally.
      *
      * @var array
      */
-    const HANDLES_RULES = [
+    const LOCALLY_HANDLED_RULES = [
         // rules
         'accepted',
         'active_url',
@@ -69,11 +70,11 @@ class Builder
     ];
 
     /**
-     * Rules to proxy to Laravel rule class.
+     * Rules to proxy to Laravel rule classes.
      *
      * @var array
      */
-    const PROXY_RULES = [
+    const PROXIED_RULES = [
         'dimensions',
         'exists',
         'in',
@@ -88,8 +89,8 @@ class Builder
      */
     const CHAINING_METHOD_PREFIXS = [
         'is',
-        'allowed',
         'has',
+        'allowed',
         'matches'
     ];
 
@@ -108,7 +109,7 @@ class Builder
     protected $proxiedRules = [];
 
     /**
-     * New up instance and call method on it.
+     * New up instance and call method on it to start chaining.
      *
      * @param  string  $method
      * @param  array  $arguments
@@ -120,112 +121,111 @@ class Builder
     }
 
     /**
-     * Delgate undefined method calls.
-     *
-     * @param  string  $calledMethod
-     * @param  array  $arguments
-     * @return $this
-     */
-    public function __call($calledMethod, $arguments)
-    {
-        $method = $this->removeMethodPrefix($calledMethod);
-
-        if ($this->canHandleMethod($method)) {
-            return $this->handleMethod($method, $arguments);
-        }
-
-        return $this->proxyMethod($method, $arguments);
-    }
-
-    /**
-     * Proxy method.
+     * Delgate undefined method calls if we can handle to rules.
      *
      * @param  string  $method
      * @param  array  $arguments
      * @return $this
      */
-    protected function proxyMethod($method, $arguments)
+    public function __call($method, $arguments)
     {
-        $rule = $this->ruleForMethod($method);
+        $method = $this->removeMethodPrefix($method);
 
-        if ($this->canProxyRule($rule)) {
-            return $this->addProxyRule($method, $arguments);
+        $rule = Str::snake($method);
+
+        if ($this->isNewLocalRule($rule)) {
+            return $this->addNewLocalRule($rule, $arguments);
+
+        } else if ($this->isNewProxyRule($rule)) {
+            return $this->addNewProxyRule($method, $arguments);
+
+        } else if ($this->canCallMethodOnLatestProxyRule($method)) {
+            return $this->callMethodOnLatestProxyRule($method, $arguments);
         }
 
-        return $this->applyMethodToLatestProxy($method, $arguments);
+        throw new BadMethodCallException('Unable to handle or proxy the method '.$method.'(). If it\'s proxied, ensure it is called directly after the proxy rule.');
     }
 
     /**
-     * Apply method to latest proxied rule.
+     * Determine if rule is a new proxy rule to be created.
      *
-     * @param  string  $method
-     * @param  array  $arguments
-     * @return $this
-     *
-     * @throws BadMethodCallException
-     */
-    protected function applyMethodToLatestProxy($method, $arguments)
-    {
-        $latestProxy = end($this->proxiedRules);
-
-        if ($this->canCallMethodOnProxy($method, $latestProxy)) {
-
-            call_user_func_array([$latestProxy, $method], $arguments);
-
-            return $this;
-        }
-
-        throw new BadMethodCallException('Unable to handle or proxy the method '.$method.'()');
-    }
-
-    /**
-     * Determine if method can be called on proxy.
-     *
-     * @param  string  $method
-     * @param  mixed  $proxy
+     * @param  string  $rule
      * @return bool
      */
-    protected function canCallMethodOnProxy($method, $proxy)
+    protected function isNewProxyRule($rule)
     {
+        return in_array($rule, static::PROXIED_RULES);
+    }
+
+    /**
+     * Determine if rule is in our list of local rules.
+     *
+     * @param  string  $rule
+     * @return bool
+     */
+    protected function isNewLocalRule($rule)
+    {
+        return in_array($rule, static::LOCALLY_HANDLED_RULES);
+    }
+
+    /**
+     * Add a new local rule.
+     *
+     * @param  string  $rule
+     * @param  array  $arguments
+     * @return $this
+     */
+    protected function addNewLocalRule($rule, $arguments)
+    {
+        $this->localRules[$rule] = Arr::flatten($arguments);
+
+        return $this;
+    }
+
+    /**
+     * Call the method on the latest proxy rule we have stored.
+     *
+     * @param  string  $method
+     * @param  array  $arguments
+     * @return $this
+     */
+    protected function callMethodOnLatestProxyRule($method, $arguments)
+    {
+        $proxy = Arr::last($this->proxiedRules);
+
+        call_user_func_array([$proxy, $method], $arguments);
+
+        return $this;
+    }
+
+    /**
+     * Determine if the given method can be called on latest proxy we have
+     * stored.
+     *
+     * @param  string  $method
+     * @return bool
+     */
+    protected function canCallMethodOnLatestProxyRule($method)
+    {
+        $proxy = Arr::last($this->proxiedRules);
+
         return null !== $proxy && method_exists($proxy, $method);
     }
 
     /**
-     * Handle method.
+     * Chaining method prefixes, as a collection.
      *
-     * @param  string  $method
-     * @param  array  $arguments
-     * @return $this
+     * @return Illuminate\Support\Collection
      */
-    protected function handleMethod($method, $arguments)
+    protected function chainingMethodPrefixes()
     {
-        $rule = $this->ruleForMethod($method);
+        static $prefixes;
 
-        return $this->addRule($rule, $arguments);
-    }
+        if (null === $prefixes) {
+            $prefixes = Collection::make(static::CHAINING_METHOD_PREFIXS);
+        }
 
-    /**
-     * Determine if method can be handled.
-     *
-     * @param  string  $method
-     * @return bool
-     */
-    protected function canHandleMethod($method)
-    {
-        $rule = $this->ruleForMethod($method);
-
-        return in_array($rule, static::HANDLES_RULES);
-    }
-
-    /**
-     * The rule for the given method.
-     *
-     * @param  string  $method
-     * @return string
-     */
-    protected function ruleForMethod($method)
-    {
-        return Str::snake($method);
+        return $prefixes;
     }
 
     /**
@@ -236,67 +236,32 @@ class Builder
      */
     protected function removeMethodPrefix($method)
     {
-        foreach (static::CHAINING_METHOD_PREFIXS as $prefix) {
-            if (0 === strpos($method, $prefix)) {
-                return lcfirst(ltrim($method, $prefix));
-            }
+        $prefix = $this->chainingMethodPrefixes()->first(function ($prefix) use ($method) {
+            return 0 === strpos($method, $prefix);
+        });
+
+        if (null === $prefix) {
+            return $method;
         }
 
-        return $method;
+        return lcfirst(ltrim($method, $prefix));
     }
 
     /**
-     * Determine if rule can be proxied.
-     *
-     * @param  string  $rule
-     * @return bool
-     */
-    protected function canProxyRule($rule)
-    {
-        return in_array($rule, static::PROXY_RULES);
-    }
-
-    /**
-     * Add rule.
-     *
-     * @param  string  $rule
-     * @param  array  $arguments
-     * @return bool
-     */
-    public function addRule($rule, $arguments = [])
-    {
-        $this->localRules[$rule] = Arr::flatten($arguments);
-
-        return $this;
-    }
-
-    /**
-     * Add proxy rule.
+     * Create a new rule by proxying to Laravel built in validation rules, and
+     * add store the new proxied rule.
      *
      * @param  string  $method
      * @param  array  $arguments
      * @return $this
      */
-    public function addProxyRule($method, $arguments)
+    protected function addNewProxyRule($method, $arguments)
     {
-        $this->proxiedRules[] = call_user_func_array([Rule::class, $method], $arguments);
+        $proxyRule = call_user_func_array([Rule::class, $method], $arguments);
+
+        $this->proxiedRules[] = $proxyRule;
 
         return $this;
-    }
-
-    /**
-     * Convert parameters to string.
-     *
-     * @param  array  $parameters
-     * @return string
-     */
-    protected function parametersToString($parameters)
-    {
-        if ([] !== $parameters) {
-            return ':'.implode(',', $parameters);
-        }
-
-        return '';
     }
 
     /**
@@ -323,13 +288,17 @@ class Builder
      */
     protected function compileLocalRules()
     {
-        $compiledRules = '';
+        $rules = $this->localRules;
 
-        foreach ($this->localRules as $key => $parameters) {
-            $compiledRules .= $key.$this->parametersToString($parameters).'|';
-        }
+        return array_reduce(array_keys($rules), function ($carry, $key) use ($rules) {
+            $carry .= $key;
 
-        return $compiledRules;
+            if ([] !== $rules[$key]) {
+                $carry .= ':'.implode(',', $rules[$key]);
+            }
+
+            return $carry .= '|';
+        }, '');
     }
 
     /**
@@ -339,12 +308,18 @@ class Builder
      */
     protected function compileProxiedRules()
     {
-        $compiledRules = '';
+        return array_reduce($this->proxiedRules, function ($carry, $rule) {
+            return $carry .= $rule.'|';
+        }, '');
+    }
 
-        foreach ($this->proxiedRules as $proxiedRule) {
-            $compiledRules .= $proxiedRule.'|';
-        }
-
-        return $compiledRules;
+    /**
+     * Cast object to string.
+     *
+     * @return string
+     */
+    public function toString()
+    {
+        return $this->get();
     }
 }
