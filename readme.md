@@ -44,7 +44,7 @@ $rules = [
 
 These methods allow for optional `$min` and / or `$max` arguments to help ensuring you can store the input properly in your database etc. Here is a list of the available helpers and their arguments:
 
-```
+```php
 use TiMacDonald\Rule;
 
 Rule::activeUrl($max)
