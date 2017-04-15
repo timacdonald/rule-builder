@@ -1,7 +1,7 @@
 {
     "name": "timacdonald/rule-builder",
     "description": "A fluent rule builder for Laravel validation rule generation.",
-    "type": "project",
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
@@ -11,7 +11,7 @@
     ],
     "autoload": {
         "psr-4": {
-          "TiMacDonald\\Rule\\": "/src"
+          "TiMacDonald\\": "/src"
         }
     },
     "require": {
