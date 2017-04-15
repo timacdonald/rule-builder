@@ -14,7 +14,7 @@ composer require timacdonald/rule-builder
 
 ```php
 
-use TiMacDonald\Rule;
+use TiMacDonald\Validation\Rule;
 
 $rules = [
     'name' => Rule::required()->string()->max(255)->get(),
@@ -31,7 +31,7 @@ You can add rules conditionally using the `when()` method.
 
 ```php
 
-use TiMacDonald\Rule;
+use TiMacDonald\Validation\Rule;
 
 $rules = [
     'data' => Rule::when($requiresJson, function ($rule) {
@@ -45,7 +45,7 @@ $rules = [
 These methods allow for optional `$min` and / or `$max` arguments to help ensuring you can store the input properly in your database etc. Here is a list of the available helpers and their arguments:
 
 ```php
-use TiMacDonald\Rule;
+use TiMacDonald\Validation\Rule;
 
 Rule::activeUrl($max)
     ->alpha($min, $max)
@@ -64,7 +64,7 @@ Rule::activeUrl($max)
 An example of these might be:
 
 ```php
-use TiMacDonald\Rule;
+use TiMacDonald\Validation\Rule;
 
 $rules = [
     'age' => Rule::integer(21)->get(),
@@ -78,7 +78,7 @@ $rules = [
 Laravel comes with some built in rule classes. If one is present, we simply proxy to them and keep on rocking, it's seamless. The `unique` rule is a built in Laravel class with a `where` method - check this out:
 
 ```php
-use TiMacDonald\Rule;
+use TiMacDonald\Validation\Rule;
 
 $rules = [
     'email' => Rule::unique('users')->where(function ($query) {
