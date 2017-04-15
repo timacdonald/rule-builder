@@ -11,7 +11,7 @@
     ],
     "autoload": {
         "psr-4": {
-          "TiMacDonald\\": "/src"
+          "TiMacDonald\\Validation\\": "/src"
         }
     },
     "require": {
