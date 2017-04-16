@@ -193,12 +193,8 @@ class Rule
         return implode('|', $this->allRules());
     }
 
-    // custom rules
-
-    protected function emailRule($max = null)
+    protected function setMax($max)
     {
-        $this->localRules[] = 'email';
-
         if (!is_null($max)) {
             $this->max($max);
         }
@@ -206,15 +202,44 @@ class Rule
         return $this;
     }
 
+    protected function setSize($max)
+    {
+        if (!is_null($max)) {
+            $this->size($max);
+        }
+
+        return $this;
+    }
+
+    protected function applyMinAndMaxFromFunctionArguments($arguments)
+    {
+        if (empty($arguments)) {
+            return $this;
+        }
+
+        $values = is_array($arguments[0]) ? $arguments[0] : $arguments;
+
+        list($min, $max) = array_merge($values, [null, null]);
+
+        return $this->setMin($min)->setMax($max);
+    }
+
+    /**
+     * Custom Rules...
+     */
+
+    protected function emailRule($max = null)
+    {
+        $this->localRules[] = 'email';
+
+        return $this->setMax($max);
+    }
+
     protected function activeUrlRule($max = null)
     {
         $this->localRules[] = 'active_url';
 
-        if (!is_null($max)) {
-            $this->max($max);
-        }
-
-        return $this;
+        return $this->setMax($max);
     }
 
     protected function characterRule()
@@ -243,48 +268,32 @@ class Rule
         return $this->applyMinAndMaxFromFunctionArguments(func_get_args());
     }
 
-    protected function fileRule($max = null)
+    protected function fileRule($size = null)
     {
         $this->localRules[] = 'file';
 
-        if (!is_null($max)) {
-            $this->size($max);
-        }
-
-        return $this;
+        return $this->setSize($size);
     }
 
-    protected function imageRule($max = null)
+    protected function imageRule($size = null)
     {
         $this->localRules[] = 'image';
 
-        if (!is_null($max)) {
-            $this->size($max);
-        }
-
-        return $this;
+        return $this->setSize($size);
     }
 
     protected function json($max = null)
     {
         $this->localRules[] = 'json';
 
-        if (!is_null($max)) {
-            $this->size($max);
-        }
-
-        return $this;
+        return $this->setMax($max);
     }
 
     protected function url($max = null)
     {
         $this->localRules[] = 'url';
 
-        if (!is_null($max)) {
-            $this->size($max);
-        }
-
-        return $this;
+        return $this->setMax($max);
     }
 
     protected function stringRule()
@@ -306,28 +315,5 @@ class Rule
         $this->localRules[] = 'numeric';
 
         return $this->applyMinAndMaxFromFunctionArguments(func_get_args());
-    }
-
-    protected function applyMinAndMaxFromFunctionArguments($arguments)
-    {
-        if (empty($arguments)) {
-            return $this;
-        }
-
-        if (is_array($arguments[0])) {
-            $arguments = $arguments[0];
-        }
-
-        list($min, $max) = array_merge($arguments, [null, null]);
-
-        if (!is_null($min)) {
-            $this->min($min);
-        }
-
-        if (!is_null($max)) {
-            $this->max($max);
-        }
-
-        return $this;
     }
 }

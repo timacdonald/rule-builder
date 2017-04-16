@@ -17,9 +17,23 @@ composer require timacdonald/rule-builder
 use TiMacDonald\Validation\Rule;
 
 $rules = [
-    'name' => Rule::required()->string()->max(255)->get(),
-    'email' => Rule::required()->string()->email()->max(255)->unique('users')->get(),
-    'password' => Rule::required()->string()->min(6)->confirmed()->get()
+    'name' => Rule::required()
+                  ->string()
+                  ->max(255)
+                  ->get(),
+
+    'email' => Rule::required()
+                   ->string()
+                   ->email()
+                   ->max(255)
+                   ->unique('users')
+                   ->get(),
+
+    'password' => Rule::required()
+                      ->string()
+                      ->min(6)
+                      ->confirmed()
+                      ->get()
 ];
 ```
 
@@ -48,7 +62,7 @@ Handy little helper that allows you to validate a single alpha character.
 use TiMacDonald\Validation\Rule;
 
 $rules = [
-    'initial' => Rule::character()->required()->get()
+    'initial' => Rule::character()->get()
 ];
 
 ```
@@ -67,8 +81,8 @@ Rule::activeUrl($max)
     ->alphaDash($min, $max)
     ->alphaNum($min, $max)
     ->email($max)
-    ->file($max)
-    ->image($max)
+    ->file($size)
+    ->image($size)
     ->integer($min, $max)
     ->numeric($min, $max)
     ->json($max)
@@ -97,8 +111,8 @@ use TiMacDonald\Validation\Rule;
 
 $rules = [
     'email' => Rule::unique('users')->where(function ($query) {
-        $query->where('account_id', 1);
-    })->email(255)->get()
+                   $query->where('account_id', 1);
+               })->email(255)->get()
 ];
 ```
 
@@ -113,4 +127,4 @@ Please feel free to suggest new ideas or send through pull requests to make this
 - Tests, tests, tests!
 - Add ability to set default `$min` and `$max` values for rules so when you call `->email()` it can default to include a `max(255)` rule.
 - Ensure `min` and `max` do not conflict.
-- Ensure only one or each rule can be added.
+- Ensure only one or each rule can be added, i.e. if 2 max rules are set, the last value overwrites the first - perhaps a `strict` method that checks for duplicates?
