@@ -1,6 +1,6 @@
 # Fluent Validation Rule Builder
 
-A fluent interface to generate Laravel validation rules. It proxies to the built in Laravel validation rules where possible and also add some sugar such as `min`, `max` helpers, as well as a handy `when` method.
+A fluent interface to generate Laravel validation rules. It proxies to the built in Laravel validation rules where possible and also add some sugar such as `min`, `max` helpers, as well as a handy `when` method and `character` rule.
 
 ## Installation
 
@@ -39,6 +39,21 @@ $rules = [
     })->max(1000)->get()
 ];
 ```
+
+### Character Rule
+
+Handy little helper that allows you to validate a single alpha character.
+
+```php
+use TiMacDonald\Validation\Rule;
+
+$rules = [
+    'initial' => Rule::character()->required()->get()
+];
+
+```
+
+The `character` rule is equivalent to calling `Rule::alpha()->max(1)`.
 
 ### Min / Max Helpers
 
