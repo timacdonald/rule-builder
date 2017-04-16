@@ -1,12 +1,13 @@
 {
     "name": "timacdonald/rule-builder",
     "description": "A fluent rule builder for Laravel validation rule generation.",
-    "type": "library",
+    "type": "utility",
     "license": "MIT",
     "authors": [
         {
             "name": "Tim MacDonald",
-            "email": "tim.mac7@me.com"
+            "email": "tim.mac7@me.com",
+            "homepage": "https://timacdonald.me"
         }
     ],
     "autoload": {
