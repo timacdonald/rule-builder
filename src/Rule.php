@@ -102,7 +102,7 @@ class Rule
         if ($this->canApplyToLatestProxyRule($method)) {
             return $this->applyToLatestProxyRule($method, $arguments);
         }
-
+dd($method);
         throw new BadMethodCallException('Unable to handle or proxy the method '.$method.'(). If it is to be applied to a proxy rule, ensure it is called directly after the original proxy rule.');
     }
 
@@ -197,6 +197,15 @@ class Rule
     {
         if (!is_null($max)) {
             $this->max($max);
+        }
+
+        return $this;
+    }
+
+    protected function setMin($min)
+    {
+        if (!is_null($min)) {
+            $this->min($min);
         }
 
         return $this;
