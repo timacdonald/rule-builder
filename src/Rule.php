@@ -2,6 +2,7 @@
 
 namespace TiMacDonald\Validation;
 
+use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule as LaravelRule;
@@ -103,7 +104,7 @@ class Rule
             return $this->applyToLatestProxyRule($method, $arguments);
         }
 dd($method);
-        throw new BadMethodCallException('Unable to handle or proxy the method '.$method.'(). If it is to be applied to a proxy rule, ensure it is called directly after the original proxy rule.');
+        throw new Exception('Unable to handle or proxy the method '.$method.'(). If it is to be applied to a proxy rule, ensure it is called directly after the original proxy rule.');
     }
 
     protected function isLocalRule($rule)
