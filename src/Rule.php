@@ -103,7 +103,7 @@ class Rule
         if ($this->canApplyToLatestProxyRule($method)) {
             return $this->applyToLatestProxyRule($method, $arguments);
         }
-dd($method);
+
         throw new Exception('Unable to handle or proxy the method '.$method.'(). If it is to be applied to a proxy rule, ensure it is called directly after the original proxy rule.');
     }
 
