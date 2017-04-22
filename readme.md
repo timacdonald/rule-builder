@@ -128,3 +128,7 @@ Please feel free to suggest new ideas or send through pull requests to make this
 - Add ability to set default `$min` and `$max` values for rules so when you call `->email()` it can default to include a `max(255)` rule.
 - Ensure `min` and `max` do not conflict.
 - Ensure only one or each rule can be added, i.e. if 2 max rules are set, the last value overwrites the first - perhaps a `strict` method that checks for duplicates?
+
+## License
+
+This package is under the MIT License. See [LICENSE](https://github.com/timacdonald/rule-builder/blob/master/LICENSE.txt) file for details.
