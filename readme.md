@@ -126,7 +126,7 @@ Just make sure you call any methods that apply to the proxied rule directly afte
 
 You can utilise rules not use setup on the rule builder by using the `raw` helper. For the sake of example:
 
-```
+```php
 $rules = [
     'email' => Rule::email()->raw('string|max:255')->get()
 ];
