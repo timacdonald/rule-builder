@@ -50,6 +50,7 @@ class Rule
         'mimetypes',
         'mimes',
         'min',
+        'raw', // custom
         'regex',
         'required_with',
         'required_with_all',
@@ -57,7 +58,7 @@ class Rule
         'required_without_all',
         'same',
         'size',
-        'when' // custom
+        'when', // custom
     ];
 
     const RULES_WITH_ID_AND_ARGUMENTS = [
@@ -325,5 +326,12 @@ class Rule
         $this->localRules[] = 'numeric';
 
         return $this->applyMinAndMaxFromFunctionArguments(func_get_args());
+    }
+
+    protected function rawRule($rules)
+    {
+        $this->localRules[] = $rules;
+
+        return $this;
     }
 }

@@ -118,6 +118,16 @@ $rules = [
 
 Just make sure you call any methods that apply to the proxied rule directly after the initla call to the proxy method.
 
+### Raw Rules
+
+You can utilise rules not use setup on the rule builder by using the `raw` helper. For the sake of example:
+
+```
+$rules = [
+    'email' => Rule::email()->raw('string|max:255')->get()
+];
+```
+
 ## Contributing
 
 Please feel free to suggest new ideas or send through pull requests to make this better. If you'd like to discuss the project, feel free to reach out on [Twitter](https://twitter.com/timacdonald87).
