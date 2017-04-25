@@ -120,7 +120,58 @@ $rules = [
 ];
 ```
 
-Just make sure you call any methods that apply to the proxied rule directly after the initla call to the proxy method.
+Just make sure you call any methods that apply to the proxied rule directly after the inital call to the proxy method.
+
+### Extending with Custom Rules
+
+If you are [creating your own validation rules](https://laravel.com/docs/5.4/validation#custom-validation-rules) and wish to use them with the rule builder you can simply extend the rule builder. You will want to do this in a [service provider](https://laravel.com/docs/5.4/providers).
+
+```php
+<?php
+
+namespace App\Providers;
+
+use TiMacDonald\Validation\Rule;
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        Validator::extend('foo_bar', function ($attribute, $value, $parameters, $validator) {
+            return $value == 'foo_bar';
+        });
+
+        Rule::extendWithRules(['foo_bar']);
+    }
+```
+
+`extendWithRules` accepts either string or an array of strings in *snake_case*. Now we can use our `foo_bar` rule like so:
+
+```php
+use TiMacDonald\Validation\Rule;
+
+$rules = [
+    'name' => Rule::string()->fooBar()->get()
+];
+```
+
+You can even pass in values like you normally would:
+
+```php
+use TiMacDonald\Validation\Rule;
+
+$rules = [
+    'name' => Rule::string()->fooBar('baz')->get()
+];
+```
+
+The output of this would be `"string|for_bar:baz"`.
 
 ### Raw Rules
 
@@ -142,6 +193,7 @@ Please feel free to suggest new ideas or send through pull requests to make this
 - Add ability to set default `$min` and `$max` values for rules so when you call `->email()` it can default to include a `max(255)` rule.
 - Ensure `min` and `max` do not conflict.
 - Ensure only one or each rule can be added, i.e. if 2 max rules are set, the last value overwrites the first - perhaps a `strict` method that checks for duplicates?
+- Allow extend rules to have `min` and `max` helpers.
 
 ## License
 

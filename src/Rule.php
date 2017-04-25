@@ -37,6 +37,8 @@ class Rule
         'url' // custom
     ];
 
+    protected static $extendedRules = [];
+
     const RULES_WITH_ARGUMENTS = [
         'after',
         'before',
@@ -90,6 +92,10 @@ class Rule
 
     public function __call($method, $arguments)
     {
+        if ($this->isExtending($method)) {
+            return $this->extendWith($arguments);
+        }
+
         $rule = Str::snake($method);
 
         if ($this->isLocalRule($rule)) {
@@ -98,7 +104,6 @@ class Rule
 
         if ($this->isProxyRule($rule)) {
             return $this->applyProxyRule($method, $arguments);
-
         }
 
         if ($this->canApplyToLatestProxyRule($method)) {
@@ -108,12 +113,25 @@ class Rule
         throw new Exception('Unable to handle or proxy the method '.$method.'(). If it is to be applied to a proxy rule, ensure it is called directly after the original proxy rule.');
     }
 
+    protected function isExtending($method)
+    {
+        return $method === 'extendWithRules';
+    }
+
+    protected function extendWith($rules)
+    {
+        static::$extendedRules = array_merge(static::$extendedRules, Arr::flatten($rules));
+
+        return $this;
+    }
+
     protected function isLocalRule($rule)
     {
         return in_array($rule, static::SIMPLE_RULES)
             || in_array($rule, static::RULES_WITH_ARGUMENTS)
             || in_array($rule, static::RULES_WITH_ID_AND_ARGUMENTS)
-            || in_array($rule, static::FLAGS);
+            || in_array($rule, static::FLAGS)
+            || in_array($rule, static::$extendedRules);
     }
 
     protected function isProxyRule($rule)
