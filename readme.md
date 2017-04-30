@@ -106,6 +106,18 @@ $rules = [
 ];
 ```
 
+### Foreign Key Validation
+
+Want to stop using the `exists` rule and be able to rock those foreign key validation rules like this:
+
+```php
+$rules [
+  'subscription_id' => Rule::foreign(App\Subscription::class)->get()
+];
+```
+
+Check out [the writeup I did](https://timacdonald.me/foreign-key-validation-rule/) to show you how. It's awesome ;)
+
 ### Proxy to Laravel Rule Classes
 
 Laravel comes with some built in rule classes. If one is present, we simply proxy to them and keep on rocking, it's seamless. The `unique` rule is a built in Laravel class with a `where` method - check this out:
