@@ -112,7 +112,7 @@ Want to stop using the `exists` rule and be able to rock those foreign key valid
 
 ```php
 $rules [
-  'subscription_id' => Rule::foreign(App\Subscription::class)->get()
+  'subscription_id' => Rule::foreignKey(App\Subscription::class)->get()
 ];
 ```
 
