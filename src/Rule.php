@@ -311,14 +311,14 @@ class Rule
         return $this->setSize($size);
     }
 
-    protected function json($max = null)
+    protected function jsonRule($max = null)
     {
         $this->localRules[] = 'json';
 
         return $this->setMax($max);
     }
 
-    protected function url($max = null)
+    protected function urlRule($max = null)
     {
         $this->localRules[] = 'url';
 
