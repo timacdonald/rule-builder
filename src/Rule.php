@@ -47,6 +47,7 @@ class Rule
         'different',
         'digits',
         'digits_between',
+        'foreign_key',
         'in_array',
         'max',
         'mimetypes',
@@ -351,5 +352,12 @@ class Rule
         $this->localRules[] = $rules;
 
         return $this;
+    }
+
+    protected function foreignKey($class)
+    {
+        $instance = is_string($class) ? new $class : $class;
+
+        return $this->exists($instance->getTable(), $instance->getKeyName());
     }
 }
