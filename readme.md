@@ -1,6 +1,6 @@
 # Fluent Validation Rule Builder
 
-A fluent interface to generate Laravel validation rules. It proxies to the built in Laravel validation rules where possible and also add some sugar such as `min`, `max` helpers, as well as a handy `when` method and `character` rule.
+A fluent interface to generate Laravel validation rules. It proxies to the built in Laravel validation rules where possible and also add some sugar such as `min`, `max` helpers, as well as a handy `when` method, `character` and `foreignKey` rule.
 
 ## Installation
 
@@ -108,7 +108,7 @@ $rules = [
 
 ### Foreign Key Validation
 
-Want to stop using the `exists` rule and be able to rock those foreign key validation rules like this:
+Want to stop using the `exists` rule and be able to rock those foreign key validation rules like a boss? You can do that by calling:
 
 ```php
 $rules [
@@ -116,7 +116,7 @@ $rules [
 ];
 ```
 
-Check out [the writeup I did](https://timacdonald.me/foreign-key-validation-rule/) to show you how. It's awesome ;)
+You can even pass in an instance if you want!
 
 ### Proxy to Laravel Rule Classes
 
