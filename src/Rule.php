@@ -354,7 +354,7 @@ class Rule
         return $this;
     }
 
-    protected function foreignKey($class)
+    protected function foreignKeyRule($class)
     {
         $instance = is_string($class) ? new $class : $class;
 
