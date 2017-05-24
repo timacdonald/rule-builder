@@ -218,7 +218,7 @@ Please feel free to suggest new ideas or send through pull requests to make this
 - Ensure `min` and `max` do not conflict.
 - Ensure only one or each rule can be added, i.e. if 2 max rules are set, the last value overwrites the first - perhaps a `strict` method that checks for duplicates?
 - Allow extend rules to have `min` and `max` helpers.
-- Include a service provider to be able to provide the foreign key rule out of the box.
+- Perhaps this should just be a service provider that macro's the built in Rule class?
 
 ## License
 
