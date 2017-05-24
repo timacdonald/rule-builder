@@ -120,7 +120,7 @@ $rules [
 
 You can even pass in an instance if you want!
 
-### Unique rule with Class or Instance instead of table name.
+### Unique Rule with Class or Instance.
 
 As [suggested on internals](https://github.com/laravel/internals/issues/591#issuecomment-302018299) you are now able to apply the unique constraint using a models class name or an instance instead of passing in the table name. This method still proxies to Laravel's built in unique rule, so you can continue to chain rules.
 
