@@ -5,7 +5,6 @@ namespace TiMacDonald\Validation;
 use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
-use Illuminate\Validation\Rule as LaravelRule;
 
 class Rule
 {
@@ -61,7 +60,8 @@ class Rule
         'required_without_all',
         'same',
         'size',
-        'when', // custom
+        'unique', // custom
+        'when', // custom,
     ];
 
     const RULES_WITH_ID_AND_ARGUMENTS = [
@@ -78,8 +78,7 @@ class Rule
         'dimensions',
         'exists',
         'in',
-        'not_in',
-        'unique'
+        'not_in'
     ];
 
     protected $localRules = [];
@@ -98,6 +97,7 @@ class Rule
         }
 
         $rule = Str::snake($method);
+
 
         if ($this->isLocalRule($rule)) {
             return $this->applyLocalRule($rule, $arguments);
@@ -157,7 +157,9 @@ class Rule
 
     protected function applyProxyRule($method, $arguments)
     {
-        $this->proxiedRules[] = call_user_func_array([LaravelRule::class, $method], $arguments);
+        $this->proxiedRules[] = call_user_func_array(
+            [\Illuminate\Validation\Rule::class, $method], $arguments
+        );
 
         return $this;
     }
@@ -345,6 +347,26 @@ class Rule
         $this->localRules[] = 'numeric';
 
         return $this->applyMinAndMaxFromFunctionArguments(func_get_args());
+    }
+
+    protected function uniqueRule($table, $column = 'NULL')
+    {
+        $table = $this->parseTableName($table);
+
+        return $this->applyProxyRule('unique', [$table, $column]);
+    }
+
+    protected function parseTableName($table)
+    {
+        if ($table instanceof \Illuminate\Database\Eloquent\Model) {
+            return $table->getTable();
+        }
+
+        if (is_string($table) && class_exists($table)) {
+            return (new $table)->getTable();
+        }
+
+        return $table;
     }
 
     protected function rawRule($rules)
