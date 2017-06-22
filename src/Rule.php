@@ -195,7 +195,7 @@ class Rule
         return array_merge($this->localRules, $this->proxiedRules);
     }
 
-    protected static function whenRule($condition, callable $callback)
+    protected function whenRule($condition, callable $callback)
     {
         $shouldCall = is_callable($condition) ? call_user_func($condition) : $condition;
 
