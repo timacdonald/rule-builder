@@ -171,7 +171,7 @@ class AppServiceProvider extends ServiceProvider
             return $value == 'foo_bar';
         });
 
-        Rule::extendWithRules(['foo_bar']);
+        Rule::extend(['foo_bar']);
     }
 ```
 
