@@ -222,6 +222,7 @@ Please feel free to suggest new ideas or send through pull requests to make this
 - Add all of these as issues and put on th development board!
 - Checkout the migration builder methods to see if we can match those closer to give a more familiar experience.
 - 'EloquentDummy' probably has an actaul testing terminology name more suitable. Work that out then switch.
+- Can we ditch the `get` method call?!? Would be dreamy if we could.
 
 ## License
 
