@@ -8,7 +8,7 @@ use Illuminate\Support\Arr;
 
 class Rule
 {
-    const BASIC_RULES = [
+    const LOCAL_RULES = [
         'alpha',
         'accepted',
         'alpha_num',
@@ -81,20 +81,21 @@ class Rule
 
     public static function extend(...$rules)
     {
-        static::$extendedRules = array_merge(static::$extendedRules, Arr::flatten($rules));
+        static::$extendedRules = array_merge(
+            static::$extendedRules, Arr::flatten($rules)
+        );
     }
 
-    // Deprecated
-    public static function extendWithRules(...$rules)
+    public static function extendWithRules()
     {
-        return static::extend($rules);
+        return static::extend(func_get_args());
     }
 
     public function __call($method, $arguments)
     {
         $rule = $this->methodNameToRule($method);
 
-        if ($this->isLocalRule($rule)) {
+        if ($this->isLocallyHandledRule($rule)) {
             return $this->applyLocalRule($rule, $arguments);
         }
 
@@ -106,7 +107,7 @@ class Rule
             return $this->applyToLatestProxyRule($method, $arguments);
         }
 
-        throw new Exception('Unable to handle or proxy the method '.$method.'(). If it is to be applied to a proxy rule, ensure it is called directly after the original proxy rule.');
+        throw new Exception('Unable to locally handle or proxy the method '.$method.'(). If it is to be applied to a proxy rule, ensure it is called directly after the original proxy rule method call.');
     }
 
     protected function methodNameToRule($method)
@@ -114,9 +115,9 @@ class Rule
         return Str::snake($method);
     }
 
-    protected function isLocalRule($rule)
+    protected function isLocallyHandledRule($rule)
     {
-        return $this->isBasicRule($rule) || $this->isExtendedRule($rule);
+        return $this->isLocalRule($rule) || $this->isExtendedRule($rule);
     }
 
     protected function isExtendedRule($rule)
@@ -124,9 +125,9 @@ class Rule
         return in_array($rule, static::$extendedRules);
     }
 
-    protected function isBasicRule($rule)
+    protected function isLocalRule($rule)
     {
-        return in_array($rule, static::BASIC_RULES);
+        return in_array($rule, static::LOCAL_RULES);
     }
 
     protected function isProxyRule($rule)
@@ -140,7 +141,7 @@ class Rule
             return $this->applyCustomRule($rule, $arguments);
         }
 
-        return $this->applyRule($this->buildStringBaeRule($rule, $arguments));
+        return $this->applyRule($this->buildStringRule($rule, $arguments));
     }
 
     protected function applyCustomRule($rule, $arguments)
@@ -155,14 +156,14 @@ class Rule
         return $this;
     }
 
-    protected function buildStringBaeRule($rule, $arguments)
+    protected function buildStringRule($rule, $arguments)
     {
         return $rule.$this->buildArgumentString($arguments);
     }
 
-    protected function buildArgumentString($arguments)
+    protected function buildArgumentString(array $arguments)
     {
-        if (!empty($arguments)) {
+        if ($arguments) {
             return ':'.implode(',', Arr::flatten($arguments));
         }
     }
@@ -174,9 +175,7 @@ class Rule
 
     protected function buildProxyRule($method, $arguments)
     {
-        return call_user_func_array(
-            [\Illuminate\Validation\Rule::class, $method], $arguments
-        );
+        return (\Illuminate\Validation\Rule::class)::$method(...$arguments);
     }
 
     protected function hasCustomRule($rule)
@@ -191,21 +190,17 @@ class Rule
 
     protected function canApplyToLatestProxyRule($method)
     {
-        if (empty($this->proxiedRules)) {
-            return false;
-        }
-
-        return method_exists($this->latestProxyRule(), $method);
+        return method_exists($this->latestRule(), $method);
     }
 
-    protected function latestProxyRule()
+    protected function latestRule()
     {
-        return Arr::last($this->proxiedRules);
+        return Arr::last($this->appliedRules);
     }
 
     protected function applyToLatestProxyRule($method, $arguments)
     {
-        $this->latestProxyRule()->$method(...$arguments);
+        $this->latestRule()->$method(...$arguments);
 
         return $this;
     }
@@ -229,28 +224,22 @@ class Rule
 
     protected function setSize($size)
     {
-        return $size ? $this->size($size) : $this;
-    }
-
-    protected function setMinAndMax($arguments)
-    {
-        if (empty($arguments)) {
-            return $this;
-        }
-
-        list($min, $max) = array_merge(Arr::flatten($arguments), [null, null]);
-
-        return $this->setMin($min)->setMax($max);
+        return $this->set('size', $size);
     }
 
     protected function setMax($max)
     {
-        return $max ? $this->max($max) : $this;
+        return $this->set('max', $max);
     }
 
     protected function setMin($min)
     {
-        return $min ? $this->min($min) : $this;
+        return $this->set('min', $min);
+    }
+
+    protected function set($rule, $value)
+    {
+        return $value ? $this->$rule($value) : $this;
     }
 
     // custom rules
@@ -260,19 +249,19 @@ class Rule
         return $this->applyRule('active_url')->setMax($max);
     }
 
-    protected function alphaRule()
+    protected function alphaRule($min = null, $max = null)
     {
-        return $this->applyRule('alpha')->setMinAndMax(func_get_args());
+        return $this->applyRule('alpha')->setMin($min)->setMax($max);
     }
 
-    protected function alphaDashRule()
+    protected function alphaDashRule($min = null, $max = null)
     {
-        return $this->applyRule('alpha_dash')->setMinAndMax(func_get_args());
+        return $this->applyRule('alpha_dash')->setMin($min)->setMax($max);
     }
 
-    protected function alphaNumRule()
+    protected function alphaNumRule($min = null, $max = null)
     {
-        return $this->applyRule('alpha_num')->setMinAndMax(func_get_args());
+        return $this->applyRule('alpha_num')->setMin($min)->setMax($max);
     }
 
     protected function characterRule()
@@ -292,7 +281,7 @@ class Rule
 
     protected function foreignKeyRule($class)
     {
-        $instance = is_string($class) ? new $class : $class;
+        $instance = $this->parseInstance($class);
 
         return $this->exists($instance->getTable(), $instance->getKeyName());
     }
@@ -302,9 +291,9 @@ class Rule
         return $this->applyRule('image')->setSize($size);
     }
 
-    protected function integerRule()
+    protected function integerRule($min = null, $max = null)
     {
-        $this->applyRule('integer')->setMinAndMax(func_get_args());
+        return $this->applyRule('integer')->setMin($min)->setMax($max);
     }
 
     protected function jsonRule($max = null)
@@ -312,9 +301,14 @@ class Rule
         return $this->applyRule('json')->setMax($max);
     }
 
-    protected function stringRule()
+    protected function numericRule($min = null, $max = null)
     {
-        return $this->applyRule('string')->setMinAndMax(func_get_args());
+        return $this->applyRule('numeric')->setMin($min)->setMax($max);
+    }
+
+    protected function stringRule($min = null, $max = null)
+    {
+        return $this->applyRule('string')->setMin($min)->setMax($max);
     }
 
     protected function urlRule($max = null)
@@ -322,14 +316,9 @@ class Rule
         return $this->applyRule('url')->setMax($max);
     }
 
-    protected function numericRule()
-    {
-        $this->applyRule('numeric')->setMinAndMax(func_get_args());
-    }
-
     protected function rawRule($rules)
     {
-        return $this->apply($rules);
+        return $this->applyRule($rules);
     }
 
     protected function uniqueRule($table, $column = 'NULL')
@@ -339,23 +328,10 @@ class Rule
         ]);
     }
 
-    protected function parseTableName($table)
-    {
-        if ($table instanceof \Illuminate\Database\Eloquent\Model) {
-            return $table->getTable();
-        }
-
-        if (class_exists($table)) {
-            return (new $table)->getTable();
-        }
-
-        return $table;
-    }
-
     protected function whenRule($condition, $callback)
     {
         if ($this->evaluate($condition)) {
-            call_user_func($callback, $this);
+            $callback($this);
         }
 
         return $this;
@@ -364,5 +340,19 @@ class Rule
     protected function evaluate($condition)
     {
         return is_callable($condition) ? call_user_func($condition) : $condition;
+    }
+
+    protected function parseInstance($instance)
+    {
+        return is_string($instance) ? new $instance : $instance;
+    }
+
+    protected function parseTableName($table)
+    {
+        if (method_exists($table, 'getTable')) {
+            return $this->parseInstance($table)->getTable();
+        }
+
+        return $table;
     }
 }
