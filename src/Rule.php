@@ -9,58 +9,62 @@ use Illuminate\Support\Arr;
 class Rule
 {
     const LOCAL_RULES = [
-        'alpha',
         'accepted',
-        'alpha_num',
         'active_url',
+        'after',
+        'after_or_equal',
+        'alpha',
         'alpha_dash',
+        'alpha_num',
         'array',
+        'bail',
+        'before',
+        'before_or_equal',
+        'between',
         'boolean',
-        'character',
+        'character', // custom
         'confirmed',
         'date',
-        'distinct',
-        'email',
-        'file',
-        'filled',
-        'image',
-        'integer',
-        'ip',
-        'json',
-        'nullable',
-        'numeric',
-        'present',
-        'required',
-        'string',
-        'timezone',
-        'url',
-        'after',
-        'before',
-        'between',
         'date_format',
         'different',
         'digits',
         'digits_between',
-        'foreign_key',
+        'distinct',
+        'email',
+        'file',
+        'filled',
+        'foreign_key', // custom
+        'image',
         'in_array',
+        'integer',
+        'ip',
+        'ipv4',
+        'ipv6',
+        'json',
         'max',
         'mimetypes',
         'mimes',
         'min',
-        'raw',
+        'nullable',
+        'numeric',
+        'optional', // custom
+        'present',
+        'raw', // custom
         'regex',
+        'required',
+        'required_if',
+        'required_unless',
         'required_with',
         'required_with_all',
         'required_without',
         'required_without_all',
         'same',
         'size',
+        'string',
+        'timezone',
         'unique',
-        'when',
-        'required_if',
-        'required_unless',
-        'bail',
-        'sometimes'
+        'url',
+        'when', // custom
     ];
 
     const PROXIED_RULES = [
@@ -222,11 +226,6 @@ class Rule
 
     // helpers...
 
-    protected function setSize($size)
-    {
-        return $this->set('size', $size);
-    }
-
     protected function setMax($max)
     {
         return $this->set('max', $max);
@@ -242,7 +241,26 @@ class Rule
         return $value ? $this->$rule($value) : $this;
     }
 
-    // custom rules
+    protected function evaluate($condition)
+    {
+        return is_callable($condition) ? call_user_func($condition) : $condition;
+    }
+
+    protected function parseInstance($instance)
+    {
+        return is_string($instance) ? new $instance : $instance;
+    }
+
+    protected function parseTableName($table)
+    {
+        if (method_exists($table, 'getTable')) {
+            return $this->parseInstance($table)->getTable();
+        }
+
+        return $table;
+    }
+
+    // custom rules...
 
     protected function activeUrlRule($max = null)
     {
@@ -264,9 +282,14 @@ class Rule
         return $this->applyRule('alpha_num')->setMin($min)->setMax($max);
     }
 
+    protected function arrayRule($min = null, $max = null)
+    {
+        return $this->applyRule('array')->setMin($min)->setMax($max);
+    }
+
     protected function characterRule()
     {
-        return $this->alpha()->max(1);
+        return $this->alpha()->min(1)->max(1);
     }
 
     protected function emailRule($max = null)
@@ -274,9 +297,9 @@ class Rule
         return $this->applyRule('email')->setMax($max);
     }
 
-    protected function fileRule($size = null)
+    protected function fileRule($max = null)
     {
-        return $this->applyRule('file')->setSize($size);
+        return $this->applyRule('file')->setMax($max);
     }
 
     protected function foreignKeyRule($class)
@@ -286,9 +309,9 @@ class Rule
         return $this->exists($instance->getTable(), $instance->getKeyName());
     }
 
-    protected function imageRule($size = null)
+    protected function imageRule($max = null)
     {
-        return $this->applyRule('image')->setSize($size);
+        return $this->applyRule('image')->setMax($max);
     }
 
     protected function integerRule($min = null, $max = null)
@@ -304,6 +327,11 @@ class Rule
     protected function numericRule($min = null, $max = null)
     {
         return $this->applyRule('numeric')->setMin($min)->setMax($max);
+    }
+
+    protected function optionalRule()
+    {
+        return $this->nullable();
     }
 
     protected function stringRule($min = null, $max = null)
@@ -335,24 +363,5 @@ class Rule
         }
 
         return $this;
-    }
-
-    protected function evaluate($condition)
-    {
-        return is_callable($condition) ? call_user_func($condition) : $condition;
-    }
-
-    protected function parseInstance($instance)
-    {
-        return is_string($instance) ? new $instance : $instance;
-    }
-
-    protected function parseTableName($table)
-    {
-        if (method_exists($table, 'getTable')) {
-            return $this->parseInstance($table)->getTable();
-        }
-
-        return $table;
     }
 }
