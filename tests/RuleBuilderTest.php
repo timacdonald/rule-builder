@@ -186,10 +186,18 @@ class RuleBuilderTest extends TestCase
         );
     }
 
+    public function test_custom_array_rule()
+    {
+        $this->assertEquals(
+            ['array', 'min:1', 'max:10'],
+            Rule::array(1, 10)->get()
+        );
+    }
+
     public function test_custom_character_rule()
     {
         $this->assertEquals(
-            ['alpha', 'max:1'],
+            ['alpha', 'min:1', 'max:1'],
             Rule::character()->get()
         );
     }
@@ -205,7 +213,7 @@ class RuleBuilderTest extends TestCase
     public function test_custom_file_rule()
     {
         $this->assertEquals(
-            ['file', 'size:10'],
+            ['file', 'max:10'],
             Rule::file(10)->get()
         );
     }
@@ -229,7 +237,7 @@ class RuleBuilderTest extends TestCase
     public function test_custom_image_rule()
     {
         $this->assertEquals(
-            ['image', 'size:10'],
+            ['image', 'max:10'],
             Rule::image(10)->get()
         );
     }
@@ -250,6 +258,22 @@ class RuleBuilderTest extends TestCase
         );
     }
 
+    public function test_custom_numeric_rule()
+    {
+        $this->assertEquals(
+            ['numeric', 'min:1', 'max:10'],
+            Rule::numeric(1, 10)->get()
+        );
+    }
+
+    public function test_custom_optional_rule()
+    {
+        $this->assertEquals(
+            ['nullable'],
+            Rule::optional()->get()
+        );
+    }
+
     public function test_custom_string_rule()
     {
         $this->assertEquals(
@@ -263,14 +287,6 @@ class RuleBuilderTest extends TestCase
         $this->assertEquals(
             ['url', 'max:10'],
             Rule::url(10)->get()
-        );
-    }
-
-    public function test_custom_numeric_rule()
-    {
-        $this->assertEquals(
-            ['numeric', 'min:1', 'max:10'],
-            Rule::numeric(1, 10)->get()
         );
     }
 
