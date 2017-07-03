@@ -2,7 +2,7 @@
 
 [![Latest Stable Version](https://poser.pugx.org/timacdonald/rule-builder/v/stable)](https://packagist.org/packages/timacdonald/rule-builder) [![Total Downloads](https://poser.pugx.org/timacdonald/rule-builder/downloads)](https://packagist.org/packages/timacdonald/rule-builder) [![License](https://poser.pugx.org/timacdonald/rule-builder/license)](https://packagist.org/packages/timacdonald/rule-builder)
 
-A fluent interface to generate Laravel validation rules with helpers. It proxies to the built in Laravel validation rules where possible and also adds some sugar such as `min`, `max` helpers, as well as a handy `when` method (inline that `sometimes` rule!), `character` and `foreignKey` rule. I love it - get around it yo!
+A fluent interface to generate Laravel validation rules with helpers. It proxies to the built in Laravel validation rules where possible and also adds some sugar such as `min` and `max` helpers, as well as a handy `when` method (inline that `sometimes` rule!), and `foreignKey` rule. I love it - get around it yo!
 
 ## Installation
 
@@ -85,20 +85,6 @@ $rules = [
     })->get()
 ];
 ```
-
-### Character Rule
-
-Handy little helper that allows you to validate a single alpha character.
-
-```php
-$rules = [
-    'initial' => Rule::character()->get()
-];
-
-```
-
-The `character` rule is equivalent to `alpha|min:1|max:1` or `Rule::alpha(1, 1)`.
-
 
 ### Optional or Nullable?!?
 

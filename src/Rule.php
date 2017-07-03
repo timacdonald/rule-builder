@@ -287,9 +287,10 @@ class Rule
         return $this->applyRule('array')->setMin($min)->setMax($max);
     }
 
+    // @deprecated will be removed in future versions.
     protected function characterRule()
     {
-        return $this->alpha()->min(1)->max(1);
+        return $this->alpha(1, 1);
     }
 
     protected function emailRule($max = null)
