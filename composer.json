@@ -13,12 +13,21 @@
     ],
     "autoload": {
         "psr-4": {
-          "TiMacDonald\\Validation\\": "/src"
+          "TiMacDonald\\Validation\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+
+            "Tests\\": "tests/"
         }
     },
     "require": {
         "php" : ">=7.0",
         "illuminate/support": ">=4.2",
         "illuminate/validation": ">=5.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
     }
 }

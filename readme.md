@@ -2,7 +2,7 @@
 
 [![Latest Stable Version](https://poser.pugx.org/timacdonald/rule-builder/v/stable)](https://packagist.org/packages/timacdonald/rule-builder) [![Total Downloads](https://poser.pugx.org/timacdonald/rule-builder/downloads)](https://packagist.org/packages/timacdonald/rule-builder) [![License](https://poser.pugx.org/timacdonald/rule-builder/license)](https://packagist.org/packages/timacdonald/rule-builder)
 
-A fluent interface to generate Laravel validation rules. It proxies to the built in Laravel validation rules where possible and also add some sugar such as `min`, `max` helpers, as well as a handy `when` method, `character` and `foreignKey` rule.
+A fluent interface to generate Laravel validation rules with helpers. It proxies to the built in Laravel validation rules where possible and also adds some sugar such as `min`, `max` helpers, as well as a handy `when` method, `character` and `foreignKey` rule. I love it - get around it yo!
 
 ## Installation
 
@@ -16,10 +16,9 @@ composer require timacdonald/rule-builder
 
 This package uses *Semantic Versioning*. You can find out more about what this is and why it matters by reading [the spec](http://semver.org) or for something more readable, check out [this post](https://laravel-news.com/building-apps-composer).
 
-## Usage
+## Basic Usage
 
 ```php
-
 use TiMacDonald\Validation\Rule;
 
 $rules = [
@@ -50,13 +49,12 @@ Don't forget you need to call the final `get()` method.
 You can add rules conditionally using the `when()` method.
 
 ```php
-
 use TiMacDonald\Validation\Rule;
 
 $rules = [
-    'data' => Rule::when($requiresJson, function ($rule) {
-        $rule->json();
-    })->max(1000)->get()
+    'username' => Rule::required()->when($userNameIsEmail, function ($rule) {
+        $rule->email();
+    })->get()
 ];
 ```
 
@@ -73,11 +71,11 @@ $rules = [
 
 ```
 
-The `character` rule is equivalent to calling `Rule::alpha()->max(1)`.
+The `character` rule is equivalent to `alpha|max:1` or `Rule::alpha()->max()`.
 
 ### Min / Max Helpers
 
-These methods allow for optional `$min` and / or `$max` arguments to help ensuring you can store the input properly in your database etc. Here is a list of the available helpers and their arguments:
+These methods allow for optional `$min` and / or `$max` parameters to help validate size retrictions on the data.  Here is a list of the available helpers and their parameters:
 
 ```php
 use TiMacDonald\Validation\Rule;
@@ -90,13 +88,13 @@ Rule::activeUrl($max)
     ->file($size)
     ->image($size)
     ->integer($min, $max)
-    ->numeric($min, $max)
     ->json($max)
+    ->numeric($min, $max)
     ->string($min, $max)
     ->url($max);
 ```
 
-An example of these might be:
+Example usage of these helper methods:
 
 ```php
 use TiMacDonald\Validation\Rule;
@@ -110,19 +108,19 @@ $rules = [
 
 ### Foreign Key Validation
 
-Want to stop using the `exists` rule and be able to rock those foreign key validation rules like a boss? You can do that by calling:
+Want to stop using the `exists` rule and be able to rock those foreign key validation rules like a boss? We'll look no further:
 
 ```php
 $rules [
-  'subscription_id' => Rule::foreignKey(App\Subscription::class)->get()
+  'subscription_id' => Rule::foreignKey(Subscription::class)->get()
 ];
 ```
 
-You can even pass in an instance if you want!
+You can even pass in an instance if you want! The class or instance will be queried to determine the table names etc for you #magic
 
 ### Unique Rule with Class or Instance.
 
-As [suggested on internals](https://github.com/laravel/internals/issues/591#issuecomment-302018299) you are now able to apply the unique constraint using a models class name or an instance instead of passing in the table name. This method still proxies to Laravel's built in unique rule, so you can continue to chain rules.
+As [suggested on internals](https://github.com/laravel/internals/issues/591#issuecomment-302018299) you are now able to apply the unique constraint using a models class name, or an instance, instead of passing in the table name as a plain string. This method still proxies to Laravel's built in unique rule, so you can continue to chain rules.
 
 ```php
 $rules [
@@ -132,7 +130,7 @@ $rules [
 
 ### Proxy to Laravel Rule Classes
 
-Laravel comes with some built in rule classes. If one is present, we simply proxy to them and keep on rocking, it's seamless. The `unique` rule is a built in Laravel class with a `where` method - check this out:
+Laravel comes with some built in rule classes. If one is present, we simply proxy to it and keep on rocking, it's seamless. The `unique` rule is a built in Laravel class with a `where` method - check this out:
 
 ```php
 use TiMacDonald\Validation\Rule;
@@ -171,11 +169,11 @@ class AppServiceProvider extends ServiceProvider
             return $value == 'foo_bar';
         });
 
-        Rule::extendWithRules(['foo_bar']);
+        Rule::extend(['foo_bar']);
     }
 ```
 
-`extendWithRules` accepts either string or an array of strings in *snake_case*. Now we can use our `foo_bar` rule like so:
+We reply on Laravel's validation rule naming convention, so please stick with snake_case rule names. Now we can use our `foo_bar` rule like so:
 
 ```php
 use TiMacDonald\Validation\Rule;
@@ -195,17 +193,19 @@ $rules = [
 ];
 ```
 
-The output of this would be `"string|for_bar:baz"`.
+The output of this would be `string|for_bar:baz`.
 
 ### Raw Rules
 
-You can utilise rules not use setup on the rule builder by using the `raw` helper. For the sake of example:
+You can utilise rules not yet setup on the rule builder by using the `raw` helper. For the sake of example:
 
 ```php
 $rules = [
-    'email' => Rule::email()->raw('string|max:255')->get()
+    'email' => Rule::email()->raw('min:10|max:255')->get()
 ];
 ```
+
+is equivalent to `email|min:10|max:255`...but don't set a min on email - thats crazy!
 
 ## Contributing
 
@@ -213,12 +213,16 @@ Please feel free to suggest new ideas or send through pull requests to make this
 
 ## What next?
 
-- Tests, tests, tests!
 - Add ability to set default `$min` and `$max` values for rules so when you call `->email()` it can default to include a `max(255)` rule.
 - Ensure `min` and `max` do not conflict.
 - Ensure only one or each rule can be added, i.e. if 2 max rules are set, the last value overwrites the first - perhaps a `strict` method that checks for duplicates?
 - Allow extend rules to have `min` and `max` helpers.
 - Perhaps this should just be a service provider that macro's the built in Rule class?
+- Revise min and max and determine if between is a better fit.
+- Add all of these as issues and put on th development board!
+- Checkout the migration builder methods to see if we can match those closer to give a more familiar experience.
+- 'EloquentDummy' probably has an actaul testing terminology name more suitable. Work that out then switch.
+- Can we ditch the `get` method call?!? Would be dreamy if we could.
 
 ## License
 
