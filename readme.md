@@ -209,7 +209,7 @@ is equivalent to `email|min:10|max:255`...but don't set a min on email - thats c
 
 By default an array is returned containing all the rules. If you want a pipe (`|`) seperated string instead, you can simple cast to a string, like so:
 
-```
+```php
 $rules = [
     'email' => (string) Rule::required()->email(255)
 ];
