@@ -241,7 +241,26 @@ class Rule
         return $value ? $this->$rule($value) : $this;
     }
 
-    // custom rules
+    protected function evaluate($condition)
+    {
+        return is_callable($condition) ? call_user_func($condition) : $condition;
+    }
+
+    protected function parseInstance($instance)
+    {
+        return is_string($instance) ? new $instance : $instance;
+    }
+
+    protected function parseTableName($table)
+    {
+        if (method_exists($table, 'getTable')) {
+            return $this->parseInstance($table)->getTable();
+        }
+
+        return $table;
+    }
+
+    // custom rules...
 
     protected function activeUrlRule($max = null)
     {
@@ -344,24 +363,5 @@ class Rule
         }
 
         return $this;
-    }
-
-    protected function evaluate($condition)
-    {
-        return is_callable($condition) ? call_user_func($condition) : $condition;
-    }
-
-    protected function parseInstance($instance)
-    {
-        return is_string($instance) ? new $instance : $instance;
-    }
-
-    protected function parseTableName($table)
-    {
-        if (method_exists($table, 'getTable')) {
-            return $this->parseInstance($table)->getTable();
-        }
-
-        return $table;
     }
 }
