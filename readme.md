@@ -42,7 +42,7 @@ $rules = [
 ];
 ```
 
-Don't forget you need to call the final `get()` method. It's a little verbose, but I actually really enjoy using it this way - you might not ¯\\\_(ツ)_/¯
+Don't forget you need to call the final `get()` method. Using this instead of the standard Laravel 'stringy' way is a little verbose, but I actually really enjoy using it this way - you might not ¯\\\_(ツ)_/¯
 
 ### Min / Max Helpers
 
