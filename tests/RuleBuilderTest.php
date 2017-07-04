@@ -295,7 +295,7 @@ class RuleBuilderTest extends TestCase
         $rules = 'string|min:1|max:10';
 
         $this->assertEquals(
-            [$rules],
+            explode('|', $rules),
             Rule::raw($rules)->get()
         );
     }

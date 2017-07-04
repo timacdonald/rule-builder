@@ -347,7 +347,11 @@ class Rule
 
     protected function rawRule($rules)
     {
-        return $this->applyRule($rules);
+        foreach (explode('|', $rules) as $rule) {
+            $this->applyRule($rule);
+        }
+
+        return $this;
     }
 
     protected function uniqueRule($table, $column = 'NULL')
