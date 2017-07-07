@@ -2,7 +2,7 @@
 
 [![Latest Stable Version](https://poser.pugx.org/timacdonald/rule-builder/v/stable)](https://packagist.org/packages/timacdonald/rule-builder) [![Total Downloads](https://poser.pugx.org/timacdonald/rule-builder/downloads)](https://packagist.org/packages/timacdonald/rule-builder) [![License](https://poser.pugx.org/timacdonald/rule-builder/license)](https://packagist.org/packages/timacdonald/rule-builder)
 
-A fluent interface to generate Laravel validation rules with helpers. It proxies to the built in Laravel validation rules where possible and also adds some sugar such as `min` and `max` helpers, as well as a handy `when` method (inline that `sometimes` rule!), and `foreignKey` rule. I love it - get around it yo!
+A fluent interface to generate Laravel validation rules with helpers. It proxies to the built in Laravel validation rules where possible and also adds some sugar such as `min` and `max` helpers, as well as a handy `when` method (inline that `sometimes` rule!). I've also add a `foreignKey` and `unique` rule that allows you to pass in classes or instances. I love it - get around it yo!
 
 ## Installation
 
