@@ -202,6 +202,14 @@ class RuleBuilderTest extends TestCase
         );
     }
 
+    public function test_custom_digits_max_rule()
+    {
+        $this->assertEquals(
+            ['digits_between:0,10'],
+            Rule::digitsMax(10)->get()
+        );
+    }
+
     public function test_custom_email_rule()
     {
         $this->assertEquals(

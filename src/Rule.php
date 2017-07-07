@@ -29,6 +29,7 @@ class Rule
         'different',
         'digits',
         'digits_between',
+        'digits_max',
         'distinct',
         'email',
         'file',
@@ -291,6 +292,11 @@ class Rule
     protected function characterRule()
     {
         return $this->alpha(1, 1);
+    }
+
+    protected function digitsMax($max)
+    {
+        return $this->digitsBetween(0, $max);
     }
 
     protected function emailRule($max = null)

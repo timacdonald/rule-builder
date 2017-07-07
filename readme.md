@@ -132,6 +132,18 @@ $rules [
 ];
 ```
 
+### Max Digits Helper Rule
+
+I've added a `maxDigits` rule after reading [this suggestion](https://github.com/laravel/internals/issues/673) over on internals. This is just an alias to the `digits_between` rule.
+
+```
+$rules [
+  'amount' => Rule::digitsMax(10)->get()
+];
+```
+
+Which is equivalent to `digits_between:0,10`.
+
 ### Extending with Custom Rules
 
 If you are [creating your own validation rules](https://laravel.com/docs/5.4/validation#custom-validation-rules) and wish to use them with the rule builder you can simply extend the rule builder. You will want to do this in a [service provider](https://laravel.com/docs/5.4/providers).
