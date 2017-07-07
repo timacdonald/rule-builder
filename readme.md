@@ -23,20 +23,17 @@ All the examples assume you have included the `use TiMacDonald\Validation\Rule;`
 ```php
 $rules = [
     'name' => Rule::required()
-                  ->string()
-                  ->max(255)
+                  ->string(3, 255)
                   ->get(),
 
     'email' => Rule::required()
                    ->string()
-                   ->email()
-                   ->max(255)
+                   ->email(255)
                    ->unique('users')
                    ->get(),
 
     'password' => Rule::required()
-                      ->string()
-                      ->min(6)
+                      ->string(6)
                       ->confirmed()
                       ->get()
 ];
