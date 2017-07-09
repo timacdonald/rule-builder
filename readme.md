@@ -71,6 +71,8 @@ $rules = [
 ];
 ```
 
+If you pass `null` as a `min` or `max` helper, the value will be skipped. This is mostly handy when there is both a `min` and `max` helper, but you do not want to add a `min` e.g. `Rule::string(null, 255)->get()`.
+
 ### Carbon with Date Rules
 
 You can now pass a `Carbon` instance to the date rules: `after`, `after_or_equal`, `before`, `before_or_equal`.
