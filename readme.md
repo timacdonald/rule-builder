@@ -2,7 +2,7 @@
 
 [![Latest Stable Version](https://poser.pugx.org/timacdonald/rule-builder/v/stable)](https://packagist.org/packages/timacdonald/rule-builder) [![Total Downloads](https://poser.pugx.org/timacdonald/rule-builder/downloads)](https://packagist.org/packages/timacdonald/rule-builder) [![License](https://poser.pugx.org/timacdonald/rule-builder/license)](https://packagist.org/packages/timacdonald/rule-builder)
 
-A fluent interface to generate Laravel validation rules with helpers. It proxies to the built in Laravel validation rules where possible and also adds some sugar such as `min` and `max` helpers, as well as a handy `when` method (inline that `sometimes` rule!). I've also add a `foreignKey` and `unique` rule that allows you to pass in classes or instances. I love it - get around it yo!
+A fluent interface to generate Laravel validation rules with helpers. It proxies to the built in Laravel validation rules where possible and also adds some sugar such as `min` and `max` helpers, ability to pass `Carbon` instances to date rules, as well as a handy `when` method (inline that `sometimes` rule!). I've also add a `foreignKey` and `unique` rule that allows you to pass in classes or instances. I love it - get around it yo!
 
 ## Installation
 
@@ -70,6 +70,18 @@ $rules = [
     'email' => Rule::email(255)->get()
 ];
 ```
+
+### Caron with Date Rules
+
+You can now pass a `Carbon` instance to the date rules: `after`, `after_or_equal`, `before`, `before_or_equal`.
+
+```php
+$rules = [
+    'due_date' => Rule::after(Carbon::now()->addYear())->get()
+];
+```
+
+Laravel's date rules utilise PHP's [`strtotime`](http://php.net/manual/en/function.strtotime.php) function to parse the provided date. As recommended by the PHP docs, the `Carbon` instance is formatted as ISO 8601 to avoid any date ambiguity.
 
 ### Conditional Rules
 
