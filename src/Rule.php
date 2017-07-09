@@ -11,15 +11,15 @@ class Rule
     const LOCAL_RULES = [
         'accepted',
         'active_url',
-        'after',
-        'after_or_equal',
+        'after', // custom
+        'after_or_equal', // custom
         'alpha',
         'alpha_dash',
         'alpha_num',
         'array',
         'bail',
-        'before',
-        'before_or_equal',
+        'before', // custom
+        'before_or_equal', // custom
         'between',
         'boolean',
         'character', // custom
@@ -29,7 +29,7 @@ class Rule
         'different',
         'digits',
         'digits_between',
-        'digits_max',
+        'digits_max', // custom
         'distinct',
         'email',
         'file',
@@ -227,6 +227,15 @@ class Rule
 
     // helpers...
 
+    protected function setCarbonRule($rule, $date)
+    {
+        if ($date instanceof Carbon) {
+            return $this->applyRule($rule.':'.$date->toIso8601String());
+        }
+
+        return $this->applyRule($rule.':'.$date);
+    }
+
     protected function setMax($max)
     {
         return $this->set('max', $max);
@@ -268,6 +277,16 @@ class Rule
         return $this->applyRule('active_url')->setMax($max);
     }
 
+    protected function afterRule($date)
+    {
+        return $this->setCarbonRule('after', $date);
+    }
+
+    protected function afterOrEqualRule($date)
+    {
+        return $this->setCarbonRule('after_or_equal', $date);
+    }
+
     protected function alphaRule($min = null, $max = null)
     {
         return $this->applyRule('alpha')->setMin($min)->setMax($max);
@@ -286,6 +305,16 @@ class Rule
     protected function arrayRule($min = null, $max = null)
     {
         return $this->applyRule('array')->setMin($min)->setMax($max);
+    }
+
+    protected function beforeRule($date)
+    {
+        return $this->setCarbonRule('before', $date);
+    }
+
+    protected function beforeOrEqualRule()
+    {
+        return $this->setCarbonRule('before_or_equal', $date);
     }
 
     // @deprecated will be removed in future versions.
