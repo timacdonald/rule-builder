@@ -3,6 +3,7 @@
 namespace TiMacDonald\Validation;
 
 use Exception;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 
@@ -229,11 +230,12 @@ class Rule
 
     protected function setCarbonRule($rule, $date)
     {
-        if ($date instanceof Carbon) {
-            return $this->applyRule($rule.':'.$date->toIso8601String());
-        }
+        return $this->applyRule($rule.':'.$this->parseDateString($date));
+    }
 
-        return $this->applyRule($rule.':'.$date);
+    protected function parseDateString($date)
+    {
+        return $date instanceof Carbon ? $date->toIso8601String() : $date;
     }
 
     protected function setMax($max)
@@ -312,7 +314,7 @@ class Rule
         return $this->setCarbonRule('before', $date);
     }
 
-    protected function beforeOrEqualRule()
+    protected function beforeOrEqualRule($date)
     {
         return $this->setCarbonRule('before_or_equal', $date);
     }

@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\TestCase;
 use TiMacDonald\Validation\Rule;
@@ -154,11 +155,51 @@ class RuleBuilderTest extends TestCase
         );
     }
 
+    public function test_can_pass_string_as_date()
+    {
+        $date = 'tomorrow';
+
+        $this->assertEquals(
+            ['before:'.$date],
+            Rule::before($date)->get()
+        );
+    }
+
+    public function test_can_pass_carbon_instance_as_date()
+    {
+        $date = Carbon::now();
+
+        $this->assertEquals(
+            ['before:'.$date->toIso8601String()],
+            Rule::before($date)->get()
+        );
+    }
+
     public function test_custom_active_url_rule()
     {
         $this->assertEquals(
             ['active_url', 'max:10'],
             Rule::activeUrl(10)->get()
+        );
+    }
+
+    public function test_custom_after_rule()
+    {
+        $date = Carbon::now();
+
+        $this->assertEquals(
+            ['after:'.$date->toIso8601String()],
+            Rule::after($date)->get()
+        );
+    }
+
+    public function test_custom_after_or_equal_rule()
+    {
+        $date = Carbon::now();
+
+        $this->assertEquals(
+            ['after_or_equal:'.$date->toIso8601String()],
+            Rule::afterOrEqual($date)->get()
         );
     }
 
@@ -191,6 +232,26 @@ class RuleBuilderTest extends TestCase
         $this->assertEquals(
             ['array', 'min:1', 'max:10'],
             Rule::array(1, 10)->get()
+        );
+    }
+
+    public function test_custom_before_rule()
+    {
+        $date = Carbon::now();
+
+        $this->assertEquals(
+            ['before:'.$date->toIso8601String()],
+            Rule::before($date)->get()
+        );
+    }
+
+    public function test_custom_before_or_equal_rule()
+    {
+        $date = Carbon::now();
+
+        $this->assertEquals(
+            ['before_or_equal:'.$date->toIso8601String()],
+            Rule::beforeOrEqual($date)->get()
         );
     }
 
