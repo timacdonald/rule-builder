@@ -71,7 +71,7 @@ $rules = [
 ];
 ```
 
-### Caron with Date Rules
+### Carbon with Date Rules
 
 You can now pass a `Carbon` instance to the date rules: `after`, `after_or_equal`, `before`, `before_or_equal`.
 
