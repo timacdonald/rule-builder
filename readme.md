@@ -234,7 +234,7 @@ I've used this when using a wysiwyg editor and needed to validate that the conte
 
 In your service provider:
 
-```
+```php
 Validator::extend('not_empty_html', function ($attribute, $value) {
     return !empty(trim(strip_tags($value)));
 });
