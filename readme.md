@@ -224,6 +224,24 @@ $rules = [
 ];
 ```
 
+## Misc Other Rules
+
+Just some other rules I've used previously. Might be handy for someone.
+
+### Not Empty HTML
+
+I've used this when using a wysiwyg editor and needed to validate that the contents was not empty - but unfortunately the editor would add an empty `<p>` tag.
+
+In your service provider:
+
+```
+Validator::extend('not_empty_html', function ($attribute, $value) {
+    return !empty(trim(strip_tags($value)));
+});
+
+Rule::extend(['not_empty_html']);
+```
+
 ## Contributing
 
 Please feel free to suggest new ideas or send through pull requests to make this better. If you'd like to discuss the project, feel free to reach out on [Twitter](https://twitter.com/timacdonald87). I just throw my ideas for the project in the [issues list](https://github.com/timacdonald/rule-builder/issues) if you want to help implement anything.
