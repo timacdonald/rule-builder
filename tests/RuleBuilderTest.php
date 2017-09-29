@@ -359,6 +359,38 @@ class RuleBuilderTest extends TestCase
         );
     }
 
+    public function test_custom_url_with_hostname_extension_rule()
+    {
+        $this->assertEquals(
+            ['url', 'regex:/[^:\s]*:\/\/[^\#\?\/\.]*\./', 'max:10'],
+            Rule::urlWithHostExtension(10)->get()
+        );
+    }
+
+    public function test_custom_url_with_scheme_rule_with_string()
+    {
+        $this->assertEquals(
+            ['url', 'regex:/^(https:\/\/)/'],
+            Rule::urlWithScheme('https')->get()
+        );
+    }
+
+    public function test_custom_url_with_scheme_rule_with_array()
+    {
+        $this->assertEquals(
+            ['url', 'regex:/^(https:\/\/)|(fb:\/\/)/'],
+            Rule::urlWithScheme(['https', 'fb'])->get()
+        );
+    }
+
+    public function test_custom_url_with_scheme_rule_with_mix_of_string_and_array()
+    {
+        $this->assertEquals(
+            ['url', 'regex:/^(https:\/\/)|(fb:\/\/)|(http:\/\/)/'],
+            Rule::urlWithScheme('https', ['fb', 'http'])->get()
+        );
+    }
+
     public function test_custom_raw_rule()
     {
         $rules = 'string|min:1|max:10';

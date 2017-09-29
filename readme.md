@@ -143,6 +143,28 @@ $rules [
 ];
 ```
 
+### URL with hostname extension rule
+
+If you need to validate that the URL has an extension (TLD or whatnot) this validation rule ensures that the hostname does in fact contain an extension.
+
+``` php
+$rules [
+    'website' => Rule::urlWithHostExtension()->get(),
+];
+```
+
+It does also allow you to use the max helper as the url rule does. This rule first applied the `url` rule and then adds a regex pattern to check for the extensions existence.
+
+### URL with specific scheme
+
+It can be handy to check that a scheme is perhaps `https` or `fb` or some other URL scheme. This is a handy rule to ensure this is enforced.
+
+``` php
+$rules = [
+    'profile' => Rule::urlWithScheme(['https', 'fb'])->get(),
+];
+```
+
 ### Max Digits Helper Rule
 
 I've added a `maxDigits` rule after reading [this suggestion](https://github.com/laravel/internals/issues/673) over on internals. This is just an alias to the `digits_between` rule.

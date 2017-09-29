@@ -66,6 +66,8 @@ class Rule
         'timezone',
         'unique',
         'url',
+        'url_with_host_extension', // custom
+        'url_with_scheme', // custom
         'when', // custom
     ];
 
@@ -380,6 +382,22 @@ class Rule
     protected function urlRule($max = null)
     {
         return $this->applyRule('url')->setMax($max);
+    }
+
+    protected function urlWithHostExtensionRule($max = null)
+    {
+        return $this->applyRule('url')->applyRule('regex:/[^:\s]*:\/\/[^\#\?\/\.]*\./')->setMax($max);
+    }
+
+    protected function urlWithSchemeRule(...$schemes)
+    {
+        $captureGroups = array_map(function ($scheme) {
+            return "($scheme:\/\/)";
+        }, Arr::flatten($schemes));
+
+        $pattern = '^'.implode('|', $captureGroups);
+
+        return $this->applyRule('url')->applyRule("regex:/$pattern/");
     }
 
     protected function rawRule($rules)
