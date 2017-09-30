@@ -126,7 +126,7 @@ Just make sure you call any methods that apply to the proxied rule directly afte
 Want to stop using the `exists` rule and be able to rock those foreign key validation rules like a boss? We'll look no further:
 
 ```php
-$rules [
+$rules = [
   'subscription_id' => Rule::foreignKey(Subscription::class)->get()
 ];
 ```
@@ -138,7 +138,7 @@ You can even pass in an instance if you want! The class or instance will be quer
 As [suggested on internals](https://github.com/laravel/internals/issues/591#issuecomment-302018299) you are now able to apply the unique constraint using a models class name, or an instance, instead of passing in the table name as a plain string (similar to the `foreignKey` rule). This method still proxies to Laravel's built in unique rule, so you can continue to chain rules.
 
 ```php
-$rules [
+$rules = [
   'title' => Rule::unique(Post::class, 'title')->get()
 ];
 ```
@@ -148,7 +148,7 @@ $rules [
 If you need to validate that the URL has an extension (TLD or whatnot) or even a specific extension (.org.au) this validation rule is for you!
 
 ``` php
-$rules [
+$rules = [
     'website' => Rule::urlWithHostExtension(['.org.au'])->get(),
     'domain' => Rule::urlWithHostExtension()->get(),
 ];
@@ -171,7 +171,7 @@ $rules = [
 I've added a `maxDigits` rule after reading [this suggestion](https://github.com/laravel/internals/issues/673) over on internals. This is just an alias to the `digits_between` rule.
 
 ```
-$rules [
+$rules = [
   'amount' => Rule::digitsMax(10)->get()
 ];
 ```
