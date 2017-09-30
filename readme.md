@@ -143,17 +143,18 @@ $rules [
 ];
 ```
 
-### URL with hostname extension rule
+### URL with specific hostname extension
 
-If you need to validate that the URL has an extension (TLD or whatnot) this validation rule ensures that the hostname does in fact contain an extension.
+If you need to validate that the URL has an extension (TLD or whatnot) or even a specific extension (.org.au) this validation rule is for you!
 
 ``` php
 $rules [
-    'website' => Rule::urlWithHostExtension()->get(),
+    'website' => Rule::urlWithHostExtension(['.org.au'])->get(),
+    'domain' => Rule::urlWithHostExtension()->get(),
 ];
 ```
 
-It does also allow you to use the max helper as the url rule does. This rule first applied the `url` rule and then adds a regex pattern to check for the extensions existence.
+This rule first applied the `url` rule and then adds a regex pattern to check for the extensions existence.
 
 ### URL with specific scheme
 
