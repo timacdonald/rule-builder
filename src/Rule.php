@@ -4,8 +4,9 @@ namespace TiMacDonald\Validation;
 
 use Exception;
 use Carbon\Carbon;
-use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 
 class Rule
 {
@@ -384,20 +385,28 @@ class Rule
         return $this->applyRule('url')->setMax($max);
     }
 
-    protected function urlWithHostExtensionRule($max = null)
+    protected function urlWithHostExtensionRule(...$extensions)
     {
-        return $this->applyRule('url')->applyRule('regex:/[^:\s]*:\/\/[^\#\?\/\.]*\./')->setMax($max);
+        if ($extensions == []) {
+            $extensions[] = '.';
+        }
+
+        $captureGroups = Collection::make($extensions)->flatten()->map(function ($extension) {
+            return str_replace('.', '\.', $extension);
+        })->map(function ($extension) {
+            return '('.$extension.')';
+        })->implode('|');
+
+        return $this->url()->regex("/[^:\s]*:\/\/[^\#\?\/\.]*$captureGroups/");
     }
 
     protected function urlWithSchemeRule(...$schemes)
     {
-        $captureGroups = array_map(function ($scheme) {
+        $captureGroups = Collection::make($schemes)->flatten()->map(function ($scheme) {
             return "($scheme:\/\/)";
-        }, Arr::flatten($schemes));
+        })->implode('|');
 
-        $pattern = '^'.implode('|', $captureGroups);
-
-        return $this->applyRule('url')->applyRule("regex:/$pattern/");
+        return $this->url()->regex("/^$captureGroups/");
     }
 
     protected function rawRule($rules)

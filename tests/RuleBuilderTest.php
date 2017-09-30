@@ -359,15 +359,31 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_url_with_hostname_extension_rule()
+    public function test_custom_url_with_hostname_extension_rule_no_extension()
     {
         $this->assertEquals(
-            ['url', 'regex:/[^:\s]*:\/\/[^\#\?\/\.]*\./', 'max:10'],
-            Rule::urlWithHostExtension(10)->get()
+            ['url', 'regex:/[^:\s]*:\/\/[^\#\?\/\.]*(\.)/'],
+            Rule::urlWithHostExtension()->get()
         );
     }
 
-    public function test_custom_url_with_scheme_rule_with_string()
+    public function test_custom_url_with_hostname_extension_rule_with_single_extension()
+    {
+        $this->assertEquals(
+            ['url', 'regex:/[^:\s]*:\/\/[^\#\?\/\.]*(\.com\.au)/'],
+            Rule::urlWithHostExtension('.com.au')->get()
+        );
+    }
+
+    public function test_custom_url_with_hostname_extension_rule_with_multiple_extension()
+    {
+        $this->assertEquals(
+            ['url', 'regex:/[^:\s]*:\/\/[^\#\?\/\.]*(\.org\.au)|(\.com\.au)/'],
+            Rule::urlWithHostExtension(['.org.au', '.com.au'])->get()
+        );
+    }
+
+    public function test_custom_url_with_scheme_rule_with_single_scheme()
     {
         $this->assertEquals(
             ['url', 'regex:/^(https:\/\/)/'],
@@ -375,19 +391,11 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_url_with_scheme_rule_with_array()
+    public function test_custom_url_with_scheme_rule_with_multiple_schemes()
     {
         $this->assertEquals(
             ['url', 'regex:/^(https:\/\/)|(fb:\/\/)/'],
             Rule::urlWithScheme(['https', 'fb'])->get()
-        );
-    }
-
-    public function test_custom_url_with_scheme_rule_with_mix_of_string_and_array()
-    {
-        $this->assertEquals(
-            ['url', 'regex:/^(https:\/\/)|(fb:\/\/)|(http:\/\/)/'],
-            Rule::urlWithScheme('https', ['fb', 'http'])->get()
         );
     }
 
