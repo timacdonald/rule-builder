@@ -319,6 +319,14 @@ class RuleBuilderTest extends TestCase
         );
     }
 
+    public function test_custom_set_helper_when_zero()
+    {
+        $this->assertEquals(
+            ['integer', 'min:0'],
+            Rule::integer(0)->get()
+        );
+    }
+
     public function test_custom_json_rule()
     {
         $this->assertEquals(

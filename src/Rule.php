@@ -253,7 +253,11 @@ class Rule
 
     protected function set($rule, $value)
     {
-        return $value ? $this->$rule($value) : $this;
+        if ($value !== null) {
+            $this->$rule($value);
+        }
+
+        return $this;
     }
 
     protected function evaluate($condition)
