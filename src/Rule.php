@@ -224,6 +224,11 @@ class Rule
         return $this->allRules();
     }
 
+    public function toString()
+    {
+        return (string) $this;
+    }
+
     public function __toString()
     {
         return implode('|', $this->allRules());
