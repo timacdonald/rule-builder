@@ -184,6 +184,32 @@ class RuleBuilderTest extends TestCase
         );
     }
 
+    function test_custom_add_rule_with_object()
+    {
+        $object = new stdClass;
+
+        $this->assertEquals(
+            [$object],
+            Rule::add($object)->get()
+        );
+    }
+
+    function test_custom_add_rule_with_string()
+    {
+        $this->assertEquals(
+            ['basic'],
+            Rule::add('basic')->get()
+        );
+    }
+
+    function test_custom_add_rule_with_array()
+    {
+        $this->assertEquals(
+            ['basic', 'basic_alternative'],
+            Rule::add(['basic', 'basic_alternative'])->get()
+        );
+    }
+
     function test_custom_after_rule()
     {
         $date = Carbon::now();

@@ -13,6 +13,7 @@ class Rule
     const LOCAL_RULES = [
         'accepted',
         'active_url',
+        'add', // custom
         'after', // custom
         'after_or_equal', // custom
         'alpha',
@@ -289,6 +290,11 @@ class Rule
     protected function activeUrlRule($max = null)
     {
         return $this->applyRule('active_url')->setMax($max);
+    }
+
+    protected function addRule(...$rules)
+    {
+        return $this->raw(...$rules);
     }
 
     protected function afterRule($date)
