@@ -73,6 +73,16 @@ $rules = [
 
 If you pass `null` as a `min` or `max` helper, the value will be skipped. This is mostly handy when there is both a `min` and `max` helper, but you do not want to add a `min` e.g. `Rule::string(null, 255)->get()`.
 
+### Custom Validation Rules
+
+Laravel has introduced some very handy [custom validation classes](https://laravel.com/docs/5.5/validation#custom-validation-rules). We've made it simple to add these rules as well. Chances are you would probably just implement all the required rules in a single validation class and not require the rule buidler, but incase you do you can do the following:
+
+```php
+$rules = [
+    'notifications' => Rule::add(new MyValidationRule)->add(new MyOtherValidationRule)->get(),
+];
+```
+
 ### Carbon with Date Rules
 
 You can now pass a `Carbon` instance to the date rules: `after`, `after_or_equal`, `before`, `before_or_equal`.
