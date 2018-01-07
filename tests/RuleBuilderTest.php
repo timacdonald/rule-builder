@@ -10,7 +10,7 @@ use TiMacDonald\Validation\Rule;
 
 class RuleBuilderTest extends TestCase
 {
-    public function setUp()
+    function setUp()
     {
         // we'll use this to test rules, as if we rely on the actual rules we
         // might run into unexpected results as the rule may have a custom
@@ -18,12 +18,12 @@ class RuleBuilderTest extends TestCase
         Rule::extend('basic', 'basic_alternative');
     }
 
-    public function test_static_call_creates_an_instance()
+    function test_static_call_creates_an_instance()
     {
         $this->assertInstanceOf(Rule::class, Rule::string());
     }
 
-    public function test_can_extend_rules()
+    function test_can_extend_rules()
     {
         Rule::extend('extend_one');
         Rule::extendWithRules('extend_two');
@@ -34,7 +34,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_can_extend_rules_passing_as_arguments()
+    function test_can_extend_rules_passing_as_arguments()
     {
         $rules = ['extended_rule_by_argument_one', 'extended_rule_by_argument_two'];
 
@@ -46,7 +46,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_can_extend_rules_passing_as_array()
+    function test_can_extend_rules_passing_as_array()
     {
         $rules = ['extended_rule_by_array_one', 'extended_rule_by_array_two'];
 
@@ -58,7 +58,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_can_pass_arguments()
+    function test_can_pass_arguments()
     {
         $this->assertEquals(
             ['basic:1,2'],
@@ -66,7 +66,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_can_pass_arguments_as_array()
+    function test_can_pass_arguments_as_array()
     {
         $this->assertEquals(
             ['basic:1,2'],
@@ -74,7 +74,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_can_pass_arguments_as_mix_of_arrays_and_arguments()
+    function test_can_pass_arguments_as_mix_of_arrays_and_arguments()
     {
         $this->assertEquals(
             Rule::basic([1], '2')->get(),
@@ -82,14 +82,14 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_applying_non_existant_rule_throws_exception()
+    function test_applying_non_existant_rule_throws_exception()
     {
         $this->expectException(\Exception::class);
 
         Rule::nonExistantRule();
     }
 
-    public function test_to_string_returns_formatted_rules()
+    function test_to_string_returns_formatted_rules()
     {
         $this->assertEquals(
             'basic:1|basic_alternative',
@@ -97,7 +97,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_get_method_returns_rules_as_array()
+    function test_get_method_returns_rules_as_array()
     {
         $this->assertEquals(
             ['basic:1', 'basic_alternative'],
@@ -105,7 +105,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_can_proxy_dimensions_rule()
+    function test_can_proxy_dimensions_rule()
     {
         $constraints = ['height' => 100, 'width' => 100];
 
@@ -115,7 +115,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_can_proxy_exists_rule()
+    function test_can_proxy_exists_rule()
     {
         $arguments = ['table_name', 'column_name'];
 
@@ -125,7 +125,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_can_proxy_in_rule()
+    function test_can_proxy_in_rule()
     {
         $arguments = [1, 2, 3];
 
@@ -135,7 +135,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_can_proxy_not_in_rule()
+    function test_can_proxy_not_in_rule()
     {
         $arguments = [1, 2, 3];
 
@@ -145,7 +145,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_can_chain_proxied_rules()
+    function test_can_chain_proxied_rules()
     {
         $table = 'table_name';
         $id = 23;
@@ -156,7 +156,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_can_pass_string_as_date()
+    function test_can_pass_string_as_date()
     {
         $date = 'tomorrow';
 
@@ -166,7 +166,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_can_pass_carbon_instance_as_date()
+    function test_can_pass_carbon_instance_as_date()
     {
         $date = Carbon::now();
 
@@ -176,7 +176,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_active_url_rule()
+    function test_custom_active_url_rule()
     {
         $this->assertEquals(
             ['active_url', 'max:10'],
@@ -184,7 +184,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_after_rule()
+    function test_custom_after_rule()
     {
         $date = Carbon::now();
 
@@ -194,7 +194,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_after_or_equal_rule()
+    function test_custom_after_or_equal_rule()
     {
         $date = Carbon::now();
 
@@ -204,7 +204,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_alpha_rule()
+    function test_custom_alpha_rule()
     {
         $this->assertEquals(
             ['alpha', 'min:1', 'max:10'],
@@ -212,7 +212,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_alpha_dash_rule()
+    function test_custom_alpha_dash_rule()
     {
         $this->assertEquals(
             ['alpha_dash', 'min:1', 'max:10'],
@@ -220,7 +220,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_alpha_num_rule()
+    function test_custom_alpha_num_rule()
     {
         $this->assertEquals(
             ['alpha_num', 'min:1', 'max:10'],
@@ -228,7 +228,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_array_rule()
+    function test_custom_array_rule()
     {
         $this->assertEquals(
             ['array', 'min:1', 'max:10'],
@@ -236,7 +236,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_before_rule()
+    function test_custom_before_rule()
     {
         $date = Carbon::now();
 
@@ -246,7 +246,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_before_or_equal_rule()
+    function test_custom_before_or_equal_rule()
     {
         $date = Carbon::now();
 
@@ -256,7 +256,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_character_rule()
+    function test_custom_character_rule()
     {
         $this->assertEquals(
             ['alpha', 'min:1', 'max:1'],
@@ -264,7 +264,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_digits_max_rule()
+    function test_custom_digits_max_rule()
     {
         $this->assertEquals(
             ['digits_between:0,10'],
@@ -272,7 +272,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_email_rule()
+    function test_custom_email_rule()
     {
         $this->assertEquals(
             ['email', 'max:10'],
@@ -280,7 +280,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_file_rule()
+    function test_custom_file_rule()
     {
         $this->assertEquals(
             ['file', 'max:10'],
@@ -288,7 +288,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_foreign_key_rule_with_class()
+    function test_custom_foreign_key_rule_with_class()
     {
         $this->assertEquals(
             ['exists:'.EloquentDummy::TABLE_NAME.','.EloquentDummy::KEY_NAME],
@@ -296,7 +296,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_foreign_key_rule_with_instance()
+    function test_custom_foreign_key_rule_with_instance()
     {
         $this->assertEquals(
             ['exists:'.EloquentDummy::TABLE_NAME.','.EloquentDummy::KEY_NAME],
@@ -304,7 +304,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_image_rule()
+    function test_custom_image_rule()
     {
         $this->assertEquals(
             ['image', 'max:10'],
@@ -312,7 +312,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_interger_rule()
+    function test_custom_interger_rule()
     {
         $this->assertEquals(
             ['integer', 'min:1', 'max:10'],
@@ -320,7 +320,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_set_helper_when_zero()
+    function test_custom_set_helper_when_zero()
     {
         $this->assertEquals(
             ['integer', 'min:0'],
@@ -328,7 +328,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_json_rule()
+    function test_custom_json_rule()
     {
         $this->assertEquals(
             ['json', 'max:10'],
@@ -336,7 +336,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_numeric_rule()
+    function test_custom_numeric_rule()
     {
         $this->assertEquals(
             ['numeric', 'min:1', 'max:10'],
@@ -344,7 +344,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_optional_rule()
+    function test_custom_optional_rule()
     {
         $this->assertEquals(
             ['nullable'],
@@ -352,7 +352,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_string_rule()
+    function test_custom_string_rule()
     {
         $this->assertEquals(
             ['string', 'min:1', 'max:10'],
@@ -360,7 +360,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_url_rule()
+    function test_custom_url_rule()
     {
         $this->assertEquals(
             ['url', 'max:10'],
@@ -368,7 +368,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_url_with_hostname_extension_rule_no_extension()
+    function test_custom_url_with_hostname_extension_rule_no_extension()
     {
         $this->assertEquals(
             ['url', 'regex:/[^:\s]*:\/\/[^\#\?\/\.]*(\.)/'],
@@ -376,7 +376,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_url_with_hostname_extension_rule_with_single_extension()
+    function test_custom_url_with_hostname_extension_rule_with_single_extension()
     {
         $this->assertEquals(
             ['url', 'regex:/[^:\s]*:\/\/[^\#\?\/\.]*(\.com\.au)/'],
@@ -384,7 +384,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_url_with_hostname_extension_rule_with_multiple_extension()
+    function test_custom_url_with_hostname_extension_rule_with_multiple_extension()
     {
         $this->assertEquals(
             ['url', 'regex:/[^:\s]*:\/\/[^\#\?\/\.]*(\.org\.au)|(\.com\.au)/'],
@@ -392,7 +392,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_url_with_scheme_rule_with_single_scheme()
+    function test_custom_url_with_scheme_rule_with_single_scheme()
     {
         $this->assertEquals(
             ['url', 'regex:/^(https:\/\/)/'],
@@ -400,7 +400,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_url_with_scheme_rule_with_multiple_schemes()
+    function test_custom_url_with_scheme_rule_with_multiple_schemes()
     {
         $this->assertEquals(
             ['url', 'regex:/^(https:\/\/)|(fb:\/\/)/'],
@@ -408,7 +408,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_raw_rule_with_string()
+    function test_custom_raw_rule_with_string()
     {
         $rules = 'string|min:1|max:10';
 
@@ -418,7 +418,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_raw_rule_with_array()
+    function test_custom_raw_rule_with_array()
     {
         $rules = ['string', 'min:1', 'max:10'];
 
@@ -428,7 +428,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_raw_rule_with_object()
+    function test_custom_raw_rule_with_object()
     {
         $object = new stdClass;
 
@@ -438,7 +438,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_unique_rule_with_class()
+    function test_custom_unique_rule_with_class()
     {
         $column = 'column_name';
 
@@ -448,7 +448,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_unique_rule_with_instance()
+    function test_custom_unique_rule_with_instance()
     {
         $column = 'column_name';
 
@@ -458,7 +458,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_unique_rule_with_table_name()
+    function test_custom_unique_rule_with_table_name()
     {
         $column = 'column_name';
 
@@ -468,7 +468,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_when_rule_applies_if_condition_true_using_boolean()
+    function test_custom_when_rule_applies_if_condition_true_using_boolean()
     {
         $this->assertEquals(
             ['string'],
@@ -478,7 +478,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_when_rule_doesnt_apply_if_condition_false_using_boolean()
+    function test_custom_when_rule_doesnt_apply_if_condition_false_using_boolean()
     {
         $this->assertEquals(
             [],
@@ -488,7 +488,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_when_rule_applies_if_condition_true_using_closure()
+    function test_custom_when_rule_applies_if_condition_true_using_closure()
     {
         $this->assertEquals(
             ['string'],
@@ -500,7 +500,7 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_when_rule_doesnt_apply_if_condition_false_using_closure()
+    function test_custom_when_rule_doesnt_apply_if_condition_false_using_closure()
     {
         $this->assertEquals(
             [],
