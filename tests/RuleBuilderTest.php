@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use stdClass;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\TestCase;
@@ -407,13 +408,33 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    public function test_custom_raw_rule()
+    public function test_custom_raw_rule_with_string()
     {
         $rules = 'string|min:1|max:10';
 
         $this->assertEquals(
             explode('|', $rules),
             Rule::raw($rules)->get()
+        );
+    }
+
+    public function test_custom_raw_rule_with_array()
+    {
+        $rules = ['string', 'min:1', 'max:10'];
+
+        $this->assertEquals(
+            $rules,
+            Rule::raw($rules)->get()
+        );
+    }
+
+    public function test_custom_raw_rule_with_object()
+    {
+        $object = new stdClass;
+
+        $this->assertEquals(
+            [$object],
+            Rule::raw($object)->get()
         );
     }
 

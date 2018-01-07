@@ -420,11 +420,24 @@ class Rule
 
     protected function rawRule($rules)
     {
-        foreach (explode('|', $rules) as $rule) {
+        foreach ($this->parseToArray($rules) as $rule) {
             $this->applyRule($rule);
         }
 
         return $this;
+    }
+
+    protected function parseToArray($rules)
+    {
+        if (is_array($rules)) {
+            return $rules;
+        }
+
+        if (is_string($rules)) {
+            return explode('|', $rules);
+        }
+
+        return [$rules];
     }
 
     protected function uniqueRule($table, $column = 'NULL')
