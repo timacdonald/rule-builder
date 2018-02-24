@@ -24,7 +24,7 @@
     "require": {
         "php" : ">=7.0",
         "nesbot/carbon": ">=1.0.0",
-        "illuminate/support": ">=4.2",
+        "illuminate/support": ">=5.3",
         "illuminate/validation": ">=5.3"
     },
     "require-dev": {
