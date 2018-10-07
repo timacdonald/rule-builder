@@ -9,14 +9,10 @@ A fluent interface to generate Laravel validation rules with helpers. It proxies
 You can install using [composer](https://getcomposer.org/) from [Packagist](https://packagist.org/packages/timacdonald/rule-builder)
 
 ```
-composer require timacdonald/rule-builder
+$ composer require timacdonald/rule-builder
 ```
 
-## Versioning
-
-This package uses *Semantic Versioning*. You can find out more about what this is and why it matters by reading [the spec](http://semver.org) or for something more readable, check out [this post](https://laravel-news.com/building-apps-composer).
-
-## Basic Usage
+## Usage
 
 All the examples assume you have included the `use TiMacDonald\Validation\Rule;` statement already.
 
@@ -35,7 +31,7 @@ $rules = [
     'password' => Rule::required()
                       ->string(6)
                       ->confirmed()
-                      ->get()
+                      ->get(),
 ];
 ```
 
@@ -43,7 +39,7 @@ Don't forget you need to call the final `get()` method. Using this instead of th
 
 ### Min / Max Helpers
 
-These methods allow for optional `$min` and / or `$max` parameters to help validate size retrictions on the data. Here is a list of the available helpers and their parameters:
+These methods allow for optional `$min` and / or `$max` parameters to help validate size restrictions on the data. Here is a list of the available helpers and their parameters:
 
 ```php
 Rule::activeUrl($max)
@@ -58,7 +54,7 @@ Rule::activeUrl($max)
     ->json($max)
     ->numeric($min, $max)
     ->string($min, $max)
-    ->url($max);
+    ->url($max)
 ```
 
 Example usage of these helper methods:
@@ -67,7 +63,7 @@ Example usage of these helper methods:
 $rules = [
     'age' => Rule::integer(21)->get(),
     'dollars' => Rule::numeric(0, 999.99)->get(),
-    'email' => Rule::email(255)->get()
+    'email' => Rule::email(255)->get(),
 ];
 ```
 
@@ -75,11 +71,13 @@ If you pass `null` as a `min` or `max` helper, the value will be skipped. This i
 
 ### Custom Validation Rules
 
-Laravel has introduced some very handy [custom validation classes](https://laravel.com/docs/5.5/validation#custom-validation-rules). We've made it simple to add these rules as well. Chances are you would probably just implement all the required rules in a single validation class and not require the rule buidler, but incase you do you can do the following:
+Laravel has introduced some very handy [custom validation classes](https://laravel.com/docs/5.5/validation#custom-validation-rules). We've made it simple to add these rules as well. Chances are you would probably just implement all the required rules in a single validation class and not require the rule builder, but in case you do you can do the following:
 
 ```php
 $rules = [
-    'notifications' => Rule::add(new MyValidationRule)->add(new MyOtherValidationRule)->get(),
+    'notifications' => Rule::add(new MyValidationRule)
+                           ->add(new MyOtherValidationRule)
+                           ->get(),
 ];
 ```
 
@@ -103,7 +101,7 @@ You can add rules conditionally using the `when()` method. This is similar to La
 $rules = [
     'username' => Rule::required()->when($userNameIsEmail, function ($rule) {
         $rule->email();
-    })->get()
+    })->get(),
 ];
 ```
 
@@ -113,7 +111,7 @@ I'm always forgetting if it is `optional` or `nullable`. Just to be clear - it's
 
 ```php
 $rules = [
-    'age' => Rule::optional()->integer(0)->get()
+    'age' => Rule::optional()->integer(0)->get(),
 ];
 ```
 
@@ -125,11 +123,11 @@ Laravel comes with some built in rule classes. If one is present, we simply prox
 $rules = [
     'email' => Rule::unique('users')->where(function ($query) {
                    $query->where('account_id', 1);
-               })->email(255)->get()
+               })->email(255)->get(),
 ];
 ```
 
-Just make sure you call any methods that apply to the proxied rule directly after the inital call to the proxy method.
+Just make sure you call any methods that apply to the proxied rule directly after the initial call to the proxy method.
 
 ### Foreign Key Validation
 
@@ -137,7 +135,7 @@ Want to stop using the `exists` rule and be able to rock those foreign key valid
 
 ```php
 $rules = [
-  'subscription_id' => Rule::foreignKey(Subscription::class)->get()
+  'subscription_id' => Rule::foreignKey(Subscription::class)->get(),
 ];
 ```
 
@@ -149,7 +147,7 @@ As [suggested on internals](https://github.com/laravel/internals/issues/591#issu
 
 ```php
 $rules = [
-  'title' => Rule::unique(Post::class, 'title')->get()
+  'title' => Rule::unique(Post::class, 'title')->get(),
 ];
 ```
 
@@ -159,8 +157,8 @@ If you need to validate that the URL has an extension (TLD or whatnot) or even a
 
 ``` php
 $rules = [
-    'website' => Rule::urlWithHostExtension(['.org.au'])->get(),
-    'domain' => Rule::urlWithHostExtension()->get(),
+    'website' => Rule::urlWithHostExtension(['.org.au'])->get(), // only .org.au extensions allowed
+    'domain' => Rule::urlWithHostExtension()->get(), //and extension
 ];
 ```
 
@@ -182,7 +180,7 @@ I've added a `maxDigits` rule after reading [this suggestion](https://github.com
 
 ```
 $rules = [
-  'amount' => Rule::digitsMax(10)->get()
+  'amount' => Rule::digitsMax(10)->get(),
 ];
 ```
 
@@ -210,7 +208,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Validator::extend('foo_bar', function ($attribute, $value, $parameters, $validator) {
-            return $value == 'foo_bar';
+            return $value === 'foo_bar';
         });
 
         Rule::extend(['foo_bar']);
@@ -221,7 +219,7 @@ We reply on Laravel's validation rule naming convention, so please stick with sn
 
 ```php
 $rules = [
-    'name' => Rule::string()->fooBar()->get()
+    'name' => Rule::string()->fooBar()->get(),
 ];
 ```
 
@@ -229,7 +227,7 @@ You can even pass in values like you normally would:
 
 ```php
 $rules = [
-    'name' => Rule::string()->fooBar('baz')->get()
+    'name' => Rule::string()->fooBar('baz')->get(),
 ];
 ```
 
@@ -241,7 +239,7 @@ You can utilise rules not yet setup on the rule builder by using the `raw` helpe
 
 ```php
 $rules = [
-    'email' => Rule::email()->raw('min:10|max:255')->get()
+    'email' => Rule::email()->raw('min:10|max:255')->get(),
 ];
 ```
 
@@ -249,11 +247,11 @@ is equivalent to `email|min:10|max:255`...but don't set a min on email - thats c
 
 ### Pipe Seperated String
 
-By default an array is returned containing all the rules. If you want a pipe (`|`) seperated string instead, you can simple cast to a string, like so:
+By default an array is returned containing all the rules. If you want a pipe (`|`) separated string instead, you can simple cast to a string, like so:
 
 ```php
 $rules = [
-    'email' => (string) Rule::required()->email(255)
+    'email' => (string) Rule::required()->email(255),
 ];
 ```
 
@@ -269,16 +267,12 @@ In your service provider:
 
 ```php
 Validator::extend('not_empty_html', function ($attribute, $value) {
-    return !empty(trim(strip_tags($value)));
+    return trim(strip_tags($value)) !== '';
 });
 
 Rule::extend(['not_empty_html']);
 ```
 
-## Contributing
+## Thanksware
 
-Please feel free to suggest new ideas or send through pull requests to make this better. If you'd like to discuss the project, feel free to reach out on [Twitter](https://twitter.com/timacdonald87). I just throw my ideas for the project in the [issues list](https://github.com/timacdonald/rule-builder/issues) if you want to help implement anything.
-
-## License
-
-This package is under the MIT License. See [LICENSE](https://github.com/timacdonald/rule-builder/blob/master/LICENSE.txt) file for details.
+You are free to use this package, but I ask that you reach out to someone (not me) who has previously, or is currently, maintaining or contributing to an open source library you are using in your project and thank them for their work. Consider your entire tech stack: packages, frameworks, languages, databases, operating systems, frontend, backend, etc.
