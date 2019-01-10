@@ -51,7 +51,6 @@ class Rule
         'min',
         'nullable',
         'numeric',
-        'optional', // custom
         'present',
         'raw', // custom
         'regex',
@@ -383,11 +382,6 @@ class Rule
     protected function numericRule($min = null, $max = null)
     {
         return $this->applyRule('numeric')->setMin($min)->setMax($max);
-    }
-
-    protected function optionalRule()
-    {
-        return $this->nullable();
     }
 
     protected function stringRule($min = null, $max = null)

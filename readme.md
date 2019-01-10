@@ -105,16 +105,6 @@ $rules = [
 ];
 ```
 
-### Optional or Nullable?!?
-
-I'm always forgetting if it is `optional` or `nullable`. Just to be clear - it's `nullable`, but I added an `optional` rule so that I can use that as well - just because I can really.
-
-```php
-$rules = [
-    'age' => Rule::optional()->integer(0)->get(),
-];
-```
-
 ### Proxy to Laravel Rule Classes
 
 Laravel comes with some built in rule classes. If one is present, we simply proxy to it and keep on rocking, it's seamless. The `unique` rule is a built in Laravel class with a `where` method - check this out:

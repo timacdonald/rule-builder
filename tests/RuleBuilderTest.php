@@ -370,14 +370,6 @@ class RuleBuilderTest extends TestCase
         );
     }
 
-    function test_custom_optional_rule()
-    {
-        $this->assertEquals(
-            ['nullable'],
-            Rule::optional()->get()
-        );
-    }
-
     function test_custom_string_rule()
     {
         $this->assertEquals(
